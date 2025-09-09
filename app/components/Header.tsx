@@ -19,10 +19,16 @@ function Header() {
             className="h-12 sm:h-14 md:h-16 w-auto object-contain cursor-pointer"
           />
         </div>
+        
 
         {/* Account Icon */}
-        <div>
-          <MdAccountCircle className="text-4xl sm:text-4xl md:text-5xl text-gray-700 cursor-pointer" />
+        <div className="flex items-center space-x-4">
+          <button
+          className="bg-[#2c3e50] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#d84343] transition"
+        >
+          a btn1
+        </button>
+          <MdAccountCircle className="text-4xl sm:text-4xl md:text-5xl text-gray-700 cursor-pointer" />          
         </div>
       </header>
     </div>
