@@ -24,7 +24,7 @@ function Header() {
         {/* Account Icon */}
         <div className="flex items-center space-x-4">
           <button
-          className="bg-[#2c3e50] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#d84343] transition"
+          className="bg-[#2c3e50] text-white text-3 font-semibold px-6 py-3 rounded-full hover:bg-[#d84343] transition"
         >
           a btn1
         </button>
