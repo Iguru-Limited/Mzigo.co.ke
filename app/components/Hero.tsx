@@ -1,6 +1,6 @@
 import React from "react";
 
-const Hero: React.FC = () => {
+function Hero() {
   return (
     <section className="text-center px-6 py-16 bg-white">
       {/* Heading */}
@@ -24,6 +24,6 @@ const Hero: React.FC = () => {
       <p className="text-lg font-semibold text-gray-700">Choose your carrier</p>
     </section>
   );
-};
+}
 
 export default Hero;

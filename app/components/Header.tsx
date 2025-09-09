@@ -3,7 +3,7 @@ import Logo from "./logo.jpg";
 import { MdAccountCircle } from "react-icons/md";
 import Image from "next/image";
 
-const Header: React.FC = () => {
+function Header() {
   return (
     <div className="bg-white drop-shadow-sm sticky top-0 z-50">
       <header className="flex justify-between items-center px-4 py-3 max-w-6xl mx-auto">
@@ -12,7 +12,7 @@ const Header: React.FC = () => {
           <Image
             src={Logo}
             alt="logo"
-            width={64} // ✅ Required in Next.js when using next/image
+            width={64}
             height={64}
             className="h-12 sm:h-14 md:h-16 w-auto object-contain cursor-pointer"
           />
@@ -25,6 +25,6 @@ const Header: React.FC = () => {
       </header>
     </div>
   );
-};
+}
 
 export default Header;
