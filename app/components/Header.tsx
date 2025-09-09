@@ -1,5 +1,4 @@
 import React from "react";
-import Logo from "./logo.jpg";
 import { MdAccountCircle } from "react-icons/md";
 import Image from "next/image";
 
@@ -10,7 +9,7 @@ function Header() {
         {/* Logo */}
         <div>
           <Image
-            src={Logo}
+            src="/logo.jpg"
             alt="logo"
             width={64}
             height={64}
