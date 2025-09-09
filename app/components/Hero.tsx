@@ -1,6 +1,11 @@
+"use client";
+
 import React from "react";
+import { useRouter } from "next/navigation";
 
 function Hero() {
+  const router = useRouter();
+
   return (
     <section className="text-center px-6 py-16 bg-white">
       {/* Heading */}
@@ -12,16 +17,20 @@ function Hero() {
 
       {/* Buttons */}
       <div className="flex justify-center space-x-6 mb-10">
-        <button className="bg-[#2c3e50] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#1a252f] transition">
+        <button
+          onClick={() => router.push("/send-mzigo")}
+          className="bg-[#2c3e50] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#1a252f] transition"
+        >
           Send Mzigo
         </button>
-        <button className="bg-[#2c3e50] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#d84343] transition">
-          Track mzigo
+
+        <button
+          onClick={() => router.push("/track-mzigo")}
+          className="bg-[#2c3e50] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#d84343] transition"
+        >
+          Track Mzigo
         </button>
       </div>
-
-      {/* Subtext */}
-      <p className="text-lg font-semibold text-gray-700">Choose your carrier</p>
     </section>
   );
 }
