@@ -1,6 +1,7 @@
 import React from 'react';
 import Logo from './logo.jpg';
 import { MdAccountCircle } from "react-icons/md";
+import Image from 'next/image';
 
 function Header() {
   return (
@@ -9,7 +10,7 @@ function Header() {
         
         {/* Logo */}
         <div>
-          <img 
+          <Image 
             src={Logo}
             alt="logo"
             className="h-12 sm:h-14 md:h-16 w-auto object-contain cursor-pointer"

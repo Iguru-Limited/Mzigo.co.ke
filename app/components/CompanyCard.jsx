@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 function CompanyCard({ companyName, imageSrc, description }) {
   return (
@@ -8,7 +9,7 @@ function CompanyCard({ companyName, imageSrc, description }) {
 
       {/* Image */}
       <div className="w-full rounded-lg overflow-hidden mb-2">
-        <img
+        <Image
           src={imageSrc}
           alt={companyName}
           className="w-full h-36 object-cover rounded-lg"
