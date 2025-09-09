@@ -5,9 +5,8 @@ function App() {
 
   return (
     <>
-    <Header/>
-    <Hero/>
-    <Landingpage/>
+      <Hero/>
+      <Landingpage/>
     </>
   )
 }
