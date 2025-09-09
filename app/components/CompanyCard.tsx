@@ -1,7 +1,17 @@
 import React from "react";
 import Image from "next/image";
 
-function CompanyCard({ companyName, imageSrc, description }) {
+interface CompanyCardProps {
+  companyName: string;
+  imageSrc: string;
+  description: string;
+}
+
+const CompanyCard: React.FC<CompanyCardProps> = ({
+  companyName,
+  imageSrc,
+  description,
+}) => {
   return (
     <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-md flex flex-col items-start">
       {/* Company Name */}
@@ -12,6 +22,8 @@ function CompanyCard({ companyName, imageSrc, description }) {
         <Image
           src={imageSrc}
           alt={companyName}
+          width={500} // ✅ must specify width and height in next/image
+          height={200}
           className="w-full h-36 object-cover rounded-lg"
         />
       </div>
@@ -30,6 +42,6 @@ function CompanyCard({ companyName, imageSrc, description }) {
       <p className="text-sm text-gray-600 lowercase">{description}</p>
     </div>
   );
-}
+};
 
 export default CompanyCard;

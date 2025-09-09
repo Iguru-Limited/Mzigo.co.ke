@@ -1,19 +1,22 @@
 import React from "react";
-import CompanyCard from '../components/CompanyCard'
-import logo from './lopha-travel-ltd.jpg'
-import Kasese from './kasese logo.jpeg'
-import Chania from './Chania logo.jpeg'
-import Kangema from './Kangema.jpeg'
-import Ungwana from './ungwana logo.jpeg'
-import Metro from './metro trans.jpeg'
+import CompanyCard from "../components/CompanyCard";
 
+// ✅ Importing static images (Next.js Image optimization handles these as StaticImageData)
+import logo from "./lopha-travel-ltd.jpg";
+import Kasese from "./kasese logo.jpeg";
+import Chania from "./Chania logo.jpeg";
+import Kangema from "./Kangema.jpeg";
+import Ungwana from "./ungwana logo.jpeg";
+import Metro from "./metro trans.jpeg";
 
+interface Company {
+  id: number;
+  name: string;
+  image: StaticImageData;
+  description: string;
+}
 
-
-
-
-
-const companies = [
+const companies: Company[] = [
   {
     id: 1,
     name: "Lopha travelers ltd",
@@ -52,9 +55,8 @@ const companies = [
   },
 ];
 
-function Landingpage() {
+const Landingpage: React.FC = () => {
   return (
-    <>    
     <div className="max-w-6xl mx-auto px-4 py-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {companies.map((company) => (
@@ -67,8 +69,7 @@ function Landingpage() {
         ))}
       </div>
     </div>
-    </>
   );
-}
+};
 
 export default Landingpage;

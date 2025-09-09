@@ -1,12 +1,12 @@
-import React from 'react'
+import React from "react";
 
-function Hero() {
+const Hero: React.FC = () => {
   return (
-    <section className="text-center px-6 py-16 bg-white">     
-
+    <section className="text-center px-6 py-16 bg-white">
       {/* Heading */}
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-snug">
-        Send Mzigo with ease.<br />
+        Send Mzigo with ease.
+        <br />
         Track every step until delivery
       </h1>
 
@@ -21,11 +21,9 @@ function Hero() {
       </div>
 
       {/* Subtext */}
-      <p className="text-lg font-semibold text-gray-700">
-        Choose your carrier
-      </p>
+      <p className="text-lg font-semibold text-gray-700">Choose your carrier</p>
     </section>
-  )
-}
+  );
+};
 
-export default Hero
+export default Hero;
