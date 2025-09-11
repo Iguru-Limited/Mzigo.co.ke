@@ -8,10 +8,10 @@ import { AiFillHeart } from "react-icons/ai";
 interface CompanyCardProps {
   companyName: string;
   imageSrc: string | StaticImageData;
-  description: string;
+  stages: string[];
 }
 
-function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
+function CompanyCard({ companyName, imageSrc, stages }: CompanyCardProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
@@ -31,7 +31,7 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
         {companyName}
       </h3>
 
-      {/* Image Wrapper (relative) */}
+      {/* Image */}
       <div className="w-full rounded-lg overflow-hidden mb-2 relative">
         <Image
           src={imageSrc}
@@ -41,7 +41,7 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
           className="w-full h-36 object-cover rounded-lg"
         />
 
-        {/* Like Button on Image */}
+        {/* Like Button */}
         <button
           onClick={toggleLike}
           className="absolute bottom-2 right-2 bg-white/80 backdrop-blur-sm p-1 rounded-full text-red-500 hover:scale-110 transition-transform"
@@ -61,11 +61,15 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
         </button>
       </div>
 
-      {/* Description */}
-      <p className="text-sm text-gray-600 lowercase mb-1">{description}</p>
-
-      {/* Like Count */}
-     
+      {/* Stages */}
+      <div className="text-sm text-gray-700 w-full">
+        <p className="font-semibold">Stages we deliver:</p>
+        <ul className="list-disc list-inside">
+          {stages.map((stage, idx) => (
+            <li key={idx}>{stage}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

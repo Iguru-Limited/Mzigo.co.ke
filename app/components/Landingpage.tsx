@@ -6,37 +6,61 @@ const companies = [
     id: 1,
     name: "Lopha travelers ltd",
     image: "/lopha-travel-ltd.jpg",
-    description: "we deliver all places in nairobi,ruiru, thika",
+    stages: [
+      "nairobi",
+      "ruiru",
+      "thika",
+    ],
   },
   {
     id: 2,
     name: "Kasese",
     image: "/kasese logo.jpeg",
-    description: "we deliver from nairobi to naivasha",
+    stages: [
+      "Nairobi",
+      "Naivasha",
+    ],
   },
   {
     id: 3,
     name: "Chania",
     image: "/Chania logo.jpeg",
-    description: "we deliver all places in nairobi",
+    stages: [
+      "Nairobi",
+      "Emali",
+      "Mombasa",
+    ],
   },
   {
     id: 4,
     name: "Kangema",
     image: "/Kangema.jpeg",
-    description: "we deliver all places in nairobi, murang'a and kangema",
+    stages: [
+      "Nairobi",
+      "kangema",
+      "Murang'a",
+    ],
   },
   {
     id: 5,
     name: "Ungwana",
     image: "/ungwana logo.jpeg",
-    description: "we deliver all places in nairobi, meru,chuka and chogoria",
+    stages: [
+      "Nairobi",
+      "Embu",
+      "Meru",
+    ],
   },
   {
     id: 6,
     name: "Metro Trans",
     image: "/metro trans.jpeg",
-    description: "we deliver all places in nairobi,ngong-road ngong ",
+    stages: [
+      "Nairobi",
+      "Junction-mall",
+      "Ngong-road",
+      "Ngong",
+    ],
   },
 ];
 
@@ -49,7 +73,7 @@ function Landingpage() {
             key={company.id}
             companyName={company.name}
             imageSrc={company.image}
-            description={company.description}
+            stages={company.stages}
           />
         ))}
       </div>
