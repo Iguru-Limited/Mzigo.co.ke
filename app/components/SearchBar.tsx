@@ -19,21 +19,30 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder = 'search by company 
   return (
     <form
       onSubmit={handleSearch}
-      className="flex items-center w-full max-w-md border border-gray-300 rounded-full px-4 py-2 bg-white shadow-sm"
+      className="flex items-center w-full max-w-4xl mx-auto border border-gray-300 rounded-full px-3 py-2 bg-white shadow-sm
+                 sm:px-4 sm:py-2.5
+                 md:px-5 md:py-3
+                 lg:px-6 lg:py-3
+                 xl:px-7 xl:py-3.5"
     >
       <input
         type="text"
         placeholder={placeholder}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="flex-1 outline-none bg-transparent text-gray-800 placeholder-gray-500 text-sm"
+        className="flex-1 outline-none bg-transparent text-gray-800 placeholder-gray-500 
+                   text-xs sm:text-sm md:text-base
+                   px-2 sm:px-3"
+        aria-label="Search input"
       />
       <button
         type="submit"
-        className="text-gray-600 hover:text-black transition-colors"
+        className="text-gray-600 hover:text-black transition-colors p-1
+                   sm:p-1.5
+                   md:p-2"
         aria-label="Search"
       >
-        <FiSearch size={20} />
+        <FiSearch className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
       </button>
     </form>
   );
