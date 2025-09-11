@@ -63,7 +63,7 @@ function CompanyCard({ companyName, imageSrc, stages }: CompanyCardProps) {
 
       {/* Stages */}
       <div className="text-sm text-gray-700 w-full">
-        <p className="font-semibold">Stages we deliver:</p>
+        <p className="font-semibold text-black">Stages we deliver:</p>
         <ul className="list-disc list-inside">
           {stages.map((stage, idx) => (
             <li key={idx}>{stage}</li>
