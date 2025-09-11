@@ -1,9 +1,10 @@
-import Hero from "./components/Hero";
 import HeroSlider from "./components/HeroSlider";
+import ValuePreposition from "./components/ValuePreposition";
 export default function Page() {
   return (
-  <div className="mt-[-6rem] bg-white">
-    <Hero />
-  </div>
+    <div className="mt-[-6rem] bg-white">
+      <HeroSlider />
+      <ValuePreposition />
+    </div>
   );
 }

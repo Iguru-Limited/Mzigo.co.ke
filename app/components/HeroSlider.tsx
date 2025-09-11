@@ -47,7 +47,7 @@ export default function HeroSlider() {
         <SwiperSlide>
           <div className="relative w-full h-full rounded-xl overflow-hidden">
             <Image
-              src="/parcel-hero-3.png"
+              src="/receive3.jpg"
               alt="Parcel Delivery 3"
               fill
               className="object-cover"
@@ -68,13 +68,12 @@ export default function HeroSlider() {
         </p>
 
         {/* Parcel Input - Responsive Layout */}
-        <div className="flex flex-col sm:flex-row items-center mt-6 space-y-4 sm:space-y-0 sm:space-x-3 w-full max-w-2xl px-4">          
-
+        <div className="flex flex-col sm:flex-row items-center mt-6 space-y-4 sm:space-y-0 sm:space-x-3 w-full max-w-2xl px-4">
           <button className="bg-[#2c3e50] text-white px-4 sm:px-6 py-2 rounded-full font-medium hover:bg-gray-800 transition w-full sm:w-auto">
             <span className="hidden sm:inline">Send Mzogo →</span>
             <span className="sm:hidden inline">Send Mzigo →</span>
           </button>
-          <SearchBar placeholder="Enter the tracking number"/>
+          <SearchBar placeholder="Enter the tracking number" />
         </div>
       </div>
     </section>
