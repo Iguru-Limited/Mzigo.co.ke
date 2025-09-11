@@ -1,29 +1,28 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { FiSearch } from 'react-icons/fi';
+import React, { useState } from "react";
+import { FiSearch } from "react-icons/fi";
 
 interface SearchBarProps {
   placeholder?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ placeholder = 'search by company or destination' }) => {
-  const [query, setQuery] = useState('');
+const SearchBar: React.FC<SearchBarProps> = ({
+  placeholder = "search by company or destination",
+}) => {
+  const [query, setQuery] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Searching for:', query);
+    console.log("Searching for:", query);
     // TODO: Add search logic here
   };
 
   return (
     <form
       onSubmit={handleSearch}
-      className="flex items-center w-full max-w-4xl mx-auto border border-gray-300 rounded-full px-3 py-2 bg-white shadow-sm
-                 sm:px-4 sm:py-2.5
-                 md:px-5 md:py-3
-                 lg:px-6 lg:py-3
-                 xl:px-7 xl:py-3.5"
+      className="flex items-center w-full max-w-4xl mx-auto border border-gray-300 rounded-full px-3 bg-white shadow-sm
+                 "
     >
       <input
         type="text"
