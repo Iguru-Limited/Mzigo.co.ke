@@ -1,11 +1,9 @@
 import Hero from "./components/Hero";
-import Landingpage from "./components/Landingpage";
-
+import HeroSlider from "./components/HeroSlider";
 export default function Page() {
   return (
-    <>
-      <Hero />
-      {/* <Landingpage /> */}
-    </>
+  <div className="mt-[-6rem] bg-white">
+    <Hero />
+  </div>
   );
 }
