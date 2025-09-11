@@ -57,7 +57,7 @@ export default function Importance() {
                   fill
                   className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                 />
-                <span className="absolute top-4 left-4 bg-white text-sm px-3 py-1 rounded-full font-semibold shadow">
+                <span className="absolute top-4 left-4 bg-white text-black text-sm px-3 py-1 rounded-full font-semibold shadow">
                   {item.tag}
                 </span>
               </div>
@@ -83,7 +83,7 @@ export default function Importance() {
                   fill
                   className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                 />
-                <span className="absolute top-4 left-4 bg-white text-sm px-3 py-1 rounded-full font-semibold shadow">
+                <span className="absolute top-4 left-4 text-black bg-white text-sm px-3 py-1 rounded-full font-semibold shadow">
                   {valueProps[2].tag}
                 </span>
               </div>
