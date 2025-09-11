@@ -5,13 +5,14 @@ import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import SearchBar from "./SearchBar";
-
 import { useState } from "react";
 import { Search } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function HeroSlider() {
   const [parcelNumber, setParcelNumber] = useState("");
+  const router = useRouter();
 
   return (
     <section className="relative w-full h-[80vh] rounded-lg shadow-2xl">
@@ -47,7 +48,7 @@ export default function HeroSlider() {
         <SwiperSlide>
           <div className="relative w-full h-full rounded-xl overflow-hidden">
             <Image
-              src="/parcel-hero-3.png"
+              src="/receive3.jpg"
               alt="Parcel Delivery 3"
               fill
               className="object-cover"
@@ -68,13 +69,12 @@ export default function HeroSlider() {
         </p>
 
         {/* Parcel Input - Responsive Layout */}
-        <div className="flex flex-col sm:flex-row items-center mt-6 space-y-4 sm:space-y-0 sm:space-x-3 w-full max-w-2xl px-4">          
+        <div className="flex flex-col sm:flex-row items-center mt-[10rem] mb-[-3rem] space-y-4 sm:space-y-0 sm:space-x-3 w-full max-w-2xl px-4">
+         <button onClick={()=>{router.push("/send-mzigo")}} className="bg-[#2c3e50] text-white px-4 sm:px-6 py-2 rounded-full font-medium hover:bg-gray-800 transition w-full sm:w-auto whitespace-nowrap">
+            Send Mzigo →
+        </button>
 
-          <button className="bg-[#2c3e50] text-white px-4 sm:px-6 py-2 rounded-full font-medium hover:bg-gray-800 transition w-full sm:w-auto">
-            <span className="hidden sm:inline">Send Mzogo →</span>
-            <span className="sm:hidden inline">Send Mzigo →</span>
-          </button>
-          <SearchBar placeholder="Enter the tracking number"/>
+          <SearchBar placeholder="Enter the tracking number" />
         </div>
       </div>
     </section>
