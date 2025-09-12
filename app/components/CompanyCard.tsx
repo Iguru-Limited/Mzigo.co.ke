@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { FiHeart } from "react-icons/fi";
 import { AiFillHeart } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 interface CompanyCardProps {
   companyName: string;
@@ -14,10 +15,16 @@ interface CompanyCardProps {
 function CompanyCard({ companyName, imageSrc, stages }: CompanyCardProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const router = useRouter();
 
   const toggleLike = () => {
     setLiked(!liked);
     setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+  };
+
+  const handleSendClick = () => {
+    const companySlug = companyName.toLowerCase().replace(/\s+/g, "-");
+    router.push(`/send-mzigo/${companySlug}`);
   };
 
   return (
@@ -53,7 +60,10 @@ function CompanyCard({ companyName, imageSrc, stages }: CompanyCardProps) {
 
       {/* Buttons */}
       <div className="flex gap-2 mb-2">
-        <button className="bg-[#2c3e50] text-white text-xs px-3 py-1 rounded-full hover:bg-blue-800 transition">
+        <button
+          onClick={handleSendClick}
+          className="bg-[#2c3e50] text-white text-xs px-3 py-1 rounded-full hover:bg-blue-800 transition"
+        >
           Send
         </button>
         <button className="bg-[#2c3e50] text-white text-xs px-3 py-1 rounded-full hover:bg-red-600 transition">
