@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { FiSearch } from "react-icons/fi";
 
 interface SearchBarProps {
   placeholder?: string;
@@ -14,34 +13,40 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Searching for:", query);
-    // TODO: Add search logic here
+    console.log("Tracking parcel for:", query);
+    // TODO: Add tracking logic here
   };
 
   return (
     <form
       onSubmit={handleSearch}
-      className="flex items-center w-full max-w-4xl mx-auto border border-gray-300 rounded-full px-3 bg-white shadow-sm
-                 "
+      className="relative w-full max-w-4xl mx-auto"
     >
+      {/* Input Field */}
       <input
         type="text"
         placeholder={placeholder}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="flex-1 outline-none bg-transparent text-gray-800 placeholder-gray-500 
+        className="w-full border border-gray-300 rounded-full pl-4 pr-20 bg-white
+                   text-gray-800 placeholder-gray-500
                    text-xs sm:text-sm md:text-base
-                   px-2 sm:px-3"
+                   py-2 sm:py-2.5 md:py-3
+                   shadow-sm outline-none focus:ring-2 focus:ring-[#2c3e50]"
         aria-label="Search input"
       />
+
+      {/* Track Button inside input */}
       <button
         type="submit"
-        className="text-gray-600 hover:text-black transition-colors p-1
-                   sm:p-1.5
-                   md:p-2"
-        aria-label="Search"
+        className="absolute right-1 top-1/2 -translate-y-1/2
+                   bg-[#2c3e50] text-white font-medium rounded-full
+                   px-4 py-1.5 text-xs 
+                   sm:px-5 sm:py-2 sm:text-sm
+                   md:px-6 md:py-2.5 md:text-base
+                   hover:bg-gray-800 transition-all whitespace-nowrap"
       >
-        <FiSearch className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+        Track
       </button>
     </form>
   );
