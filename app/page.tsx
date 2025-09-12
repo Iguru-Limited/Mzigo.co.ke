@@ -1,12 +1,10 @@
 import HeroSlider from "./components/HeroSlider";
-import ValuePreposition from "./components/ValuePreposition";
-import Importance from "./components/Importance";
+import FAQ from "./components/FAQ";
 export default function Page() {
   return (
     <div className="mt-[-6rem] bg-white">
       <HeroSlider />
-      <ValuePreposition />
-      <Importance />
+      <FAQ />
     </div>
   );
 }
