@@ -66,11 +66,11 @@ function Landingpage() {
       >
         {/* From select */}
         <div className="flex items-center gap-2 text-black">
-          <label className="font-medium text-black text-sm">From:</label>
+          <label className="font-bold text-black text-xl">From:</label>
           <select
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-md px-3 py-2 text-lg font-semibold text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="">Any</option>
             {allStages.map((stage, idx) => (
@@ -83,11 +83,11 @@ function Landingpage() {
 
         {/* To select */}
         <div className="flex items-center gap-2 text-black">
-          <label className="font-medium text-sm">To:</label>
+          <label className="font-boldb text-lg">To:</label>
           <select
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border border-gray-300 rounded-md font-bold px-3 py-2 text-lgb text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="">Any</option>
             {allStages.map((stage, idx) => (
