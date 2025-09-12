@@ -72,7 +72,7 @@ export default function HeroSlider() {
 
         {/* Parcel Input - Responsive Layout */}
         <div className="flex flex-col sm:flex-row items-center mt-[10rem] mb-[-3rem] space-y-4 sm:space-y-0 sm:space-x-3 w-full max-w-2xl px-4">
-         <button onClick={()=>{router.push("/send-mzigo")}} className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-5 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-auto whitespace-nowrap">
+         <button onClick={()=>{router.push("/send-mzigo")}} className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-auto whitespace-nowrap">
             Send Mzigo →
         </button>
 
