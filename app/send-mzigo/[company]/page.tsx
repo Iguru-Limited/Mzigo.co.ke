@@ -8,23 +8,66 @@ interface PageProps {
   };
 }
 
+const companies = [
+  {
+    id: 1,
+    name: "Lopha travelers ltd",
+    image: "/lopha-travel-ltd.jpg",
+    stages: ["Nairobi", "Ruiru", "Thika"],
+  },
+  {
+    id: 2,
+    name: "Kasese",
+    image: "/kasese logo.jpeg",
+    stages: ["Nairobi", "Naivasha"],
+  },
+  {
+    id: 3,
+    name: "Chania",
+    image: "/Chania logo.jpeg",
+    stages: ["Nairobi", "Emali", "Mombasa"],
+  },
+  {
+    id: 4,
+    name: "Kangema",
+    image: "/Kangema.jpeg",
+    stages: ["Nairobi", "Kangema", "Murang'a"],
+  },
+  {
+    id: 5,
+    name: "Ungwana",
+    image: "/ungwana logo.jpeg",
+    stages: ["Nairobi", "Embu", "Meru"],
+  },
+  {
+    id: 6,
+    name: "Metro Trans",
+    image: "/metro trans.jpeg",
+    stages: ["Nairobi", "Junction-mall", "Ngong-road", "Ngong"],
+  },
+];
+
 function SendMzigoPage({ params }: PageProps) {
   const { company } = params;
   const companyName = company
     .replace(/-/g, " ")
     .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize words
 
+  const currentCompany = companies.find(
+    (c) => c.name.toLowerCase() === companyName.toLowerCase()
+  );
+
   const [formData, setFormData] = useState({
     // Sender Details
     senderName: "",
     senderPhone: "",
     senderEmail: "",
-    senderAddress: "",
+    senderStage: "",
     // Receiver Details
     receiverName: "",
     receiverPhone: "",
     receiverEmail: "",
-    receiverAddress: "",
+    receiverStage: "",
     // Parcel Details
     parcelDescription: "",
     parcelWeight: "",
@@ -94,15 +137,20 @@ function SendMzigoPage({ params }: PageProps) {
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
               required
             />
-            <textarea
-              name="senderAddress"
-              placeholder="Address"
-              value={formData.senderAddress}
+            <select
+              name="senderStage"
+              value={formData.senderStage}
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
-              rows={3}
               required
-            />
+            >
+              <option value="">Select Sender Stage</option>
+              {currentCompany?.stages.map((stage, idx) => (
+                <option key={idx} value={stage}>
+                  {stage}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -139,15 +187,20 @@ function SendMzigoPage({ params }: PageProps) {
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
               required
             />
-            <textarea
-              name="receiverAddress"
-              placeholder="Address"
-              value={formData.receiverAddress}
+            <select
+              name="receiverStage"
+              value={formData.receiverStage}
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
-              rows={3}
               required
-            />
+            >
+              <option value="">Select Receiver Stage</option>
+              {currentCompany?.stages.map((stage, idx) => (
+                <option key={idx} value={stage}>
+                  {stage}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
