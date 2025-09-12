@@ -5,30 +5,21 @@ import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
+    question: "How do i send a parcel?",
+    answer:
+      "Choose the conpany you sending with, fill your infiormation then make a drop off to the  office of the company involved.",
+  },
+  {
     question: "How do I track my parcel?",
     answer:
       "Enter your tracking number in the search bar and click Track. You’ll instantly see real-time updates.",
   },
   {
-    question: "Can I change the delivery address?",
+    question: "How do i make a drop off?",
     answer:
-      "Yes, you can update your delivery address within 2 hours of booking. Go to your account → Manage Orders → Update Address.",
+      "visit the office of the company you are sending with and hand over your parcel to the customer service representative.",
   },
-  {
-    question: "What happens if my parcel is delayed?",
-    answer:
-      "You’ll get a new estimated delivery date on your tracking page. If it’s urgent, our support team is available 24/7.",
-  },
-  {
-    question: "Is my parcel insured?",
-    answer:
-      "Yes. All parcels come with basic insurance. You can also add extra coverage for valuable items during checkout.",
-  },
-  {
-    question: "How do I schedule a pickup?",
-    answer:
-      "Log in, select Book Pickup, choose your location and time. A courier will collect your parcel at your doorstep.",
-  },
+    
 ];
 
 const FAQ: React.FC = () => {
