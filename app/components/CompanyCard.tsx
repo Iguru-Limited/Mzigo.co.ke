@@ -51,7 +51,7 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
         {/* Like Button */}
         <button
           onClick={toggleLike}
-          className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm p-3 rounded-full text-red-500 hover:scale-110 transition-transform"
+          className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm p-3 rounded-full text-red-500 hover:scale-110 transition-transform cursor-pointer"
           aria-label="Like"
         >
           {liked ? <AiFillHeart size={26} /> : <FiHeart size={26} />}
@@ -61,14 +61,14 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-6">
           <button
             onClick={handleSendClick}
-            className="bg-[#2c3e50] text-white font-semibold text-lg px-7 py-3 rounded-full shadow-lg 
-                       hover:bg-blue-800 transition transform hover:scale-110"
+            className="bg-green-600 text-white font-semibold text-lg px-7 py-3 rounded-full shadow-lg 
+                       hover:bg-green-900 transition transform hover:scale-110 cursor-pointer"
           >
             Send
           </button>
           <button
-            className="bg-[#2c3e50] text-white font-semibold text-lg px-7 py-3 rounded-full shadow-lg 
-                       hover:bg-red-600 transition transform hover:scale-110"
+            className="bg-green-600 text-white font-semibold text-lg px-7 py-3 rounded-full shadow-lg 
+                       hover:bg-green-900 transition transform hover:scale-110 cursor-pointer"
           >
             Track
           </button>

@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { FiSend } from "react-icons/fi";
+import { FaSearchLocation } from "react-icons/fa";
 
 export default function HeroSlider() {
   const router = useRouter();
@@ -33,18 +35,20 @@ export default function HeroSlider() {
             onClick={() => {
               router.push("/send-mzigo");
             }}
-            className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-64 whitespace-nowrap"
+            className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-64 whitespace-nowrap flex items-center justify-center gap-2"
           >
-            Send Mzigo →
+            Send Mzigo
+            <FiSend size={28} />
           </button>
 
           <button
             onClick={() => {
               router.push("/track-mzigo");
             }}
-            className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-64 whitespace-nowrap"
+            className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-64 whitespace-nowrap flex items-center justify-center gap-2"
           >
             Track
+            <FaSearchLocation size={24} />
           </button>
         </div>
       </div>
