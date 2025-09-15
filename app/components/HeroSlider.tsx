@@ -35,7 +35,7 @@ export default function HeroSlider() {
             onClick={() => {
               router.push("/send-mzigo");
             }}
-            className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-64 whitespace-nowrap flex items-center justify-center gap-2"
+            className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-64 whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer"
           >
             Send Mzigo
             <FiSend size={28} />
@@ -45,7 +45,7 @@ export default function HeroSlider() {
             onClick={() => {
               router.push("/track-mzigo");
             }}
-            className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-64 whitespace-nowrap flex items-center justify-center gap-2"
+            className="bg-[#2c3e50] text-white px-6 text-2xl sm:px-5 py-2 rounded-full font-bold hover:bg-gray-800 transition w-full sm:w-64 whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer"
           >
             Track
             <FaSearchLocation size={24} />
