@@ -38,37 +38,41 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
         {companyName}
       </h3>
 
-      {/* Image */}
+      {/* Image Section */}
       <div className="w-full rounded-lg overflow-hidden mb-2 relative">
         <Image
           src={imageSrc}
           alt={companyName}
           width={500}
           height={200}
-          className="w-full h-36 object-cover rounded-lg"
+          className="w-full h-52 object-cover rounded-lg"
         />
 
         {/* Like Button */}
         <button
           onClick={toggleLike}
-          className="absolute bottom-2 right-2 bg-white/80 backdrop-blur-sm p-1 rounded-full text-red-500 hover:scale-110 transition-transform"
+          className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm p-3 rounded-full text-red-500 hover:scale-110 transition-transform"
           aria-label="Like"
         >
-          {liked ? <AiFillHeart size={20} /> : <FiHeart size={20} />}
+          {liked ? <AiFillHeart size={26} /> : <FiHeart size={26} />}
         </button>
-      </div>
 
-      {/* Buttons */}
-      <div className="flex gap-2 mb-2">
-        <button
-          onClick={handleSendClick}
-          className="bg-[#2c3e50] text-white text-xs px-3 py-1 rounded-full hover:bg-blue-800 transition"
-        >
-          Send
-        </button>
-        <button className="bg-[#2c3e50] text-white text-xs px-3 py-1 rounded-full hover:bg-red-600 transition">
-          Track
-        </button>
+        {/* Overlay Buttons */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-6">
+          <button
+            onClick={handleSendClick}
+            className="bg-[#2c3e50] text-white font-semibold text-lg px-7 py-3 rounded-full shadow-lg 
+                       hover:bg-blue-800 transition transform hover:scale-110"
+          >
+            Send
+          </button>
+          <button
+            className="bg-[#2c3e50] text-white font-semibold text-lg px-7 py-3 rounded-full shadow-lg 
+                       hover:bg-red-600 transition transform hover:scale-110"
+          >
+            Track
+          </button>
+        </div>
       </div>
 
       {/* Description */}
