@@ -42,7 +42,7 @@ const companies = [
 ];
 
 function Landingpage() {
-  const [from, setFrom] = useState("");
+  const [from, setFrom] = useState("Nairobi");
   const [to, setTo] = useState("");
 
   // collect all unique stages
