@@ -8,41 +8,53 @@ const companies = [
     name: "Lopha travelers ltd",
     image: "/lopha-travel-ltd.jpg",
     stages: ["Nairobi", "Ruiru", "Thika"],
+    description:
+      "Reliable bus services connecting Nairobi to Ruiru and Thika with comfortable and timely travel.",
   },
   {
     id: 2,
     name: "Kasese",
     image: "/kasese logo.jpeg",
     stages: ["Nairobi", "Naivasha"],
+    description:
+      "Efficient transport solutions from Nairobi to Naivasha, ensuring safe and quick deliveries.",
   },
   {
     id: 3,
     name: "Chania",
     image: "/Chania logo.jpeg",
     stages: ["Nairobi", "Emali", "Mombasa"],
+    description:
+      "Trusted partner for parcel delivery from Nairobi through Emali to Mombasa coast.",
   },
   {
     id: 4,
     name: "Kangema",
     image: "/Kangema.jpeg",
     stages: ["Nairobi", "Kangema", "Murang'a"],
+    description:
+      "Connecting Nairobi to Kangema and Murang'a with dependable and affordable transport services.",
   },
   {
     id: 5,
     name: "Ungwana",
     image: "/ungwana logo.jpeg",
     stages: ["Nairobi", "Embu", "Meru"],
+    description:
+      "Comprehensive delivery network linking Nairobi to Embu and Meru regions.",
   },
   {
     id: 6,
     name: "Metro Trans",
     image: "/metro trans.jpeg",
     stages: ["Nairobi", "Junction-mall", "Ngong-road", "Ngong"],
+    description:
+      "Urban and suburban transport expert, serving Nairobi and key areas like Ngong Road.",
   },
 ];
 
 function Landingpage() {
-  const [from, setFrom] = useState("");
+  const [from, setFrom] = useState("Nairobi");
   const [to, setTo] = useState("");
 
   // collect all unique stages
@@ -107,7 +119,7 @@ function Landingpage() {
               key={company.id}
               companyName={company.name}
               imageSrc={company.image}
-              stages={company.stages}
+              description={company.description}
             />
           ))
         ) : (

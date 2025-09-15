@@ -85,7 +85,7 @@ function SendMzigoPage({ params }: PageProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    alert("Form submitted successfully!");
+    alert("Mzigo Registered successfully!");
   };
 
   return (
@@ -229,7 +229,7 @@ function SendMzigoPage({ params }: PageProps) {
           type="submit"
           className="w-full bg-[#2c3e50] text-white py-3 px-6 rounded-md hover:bg-blue-800 transition"
         >
-          Submit Order
+          Register Mzigo
         </button>
       </form>
     </div>

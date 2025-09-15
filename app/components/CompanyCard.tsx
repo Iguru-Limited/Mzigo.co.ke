@@ -9,10 +9,10 @@ import { useRouter } from "next/navigation";
 interface CompanyCardProps {
   companyName: string;
   imageSrc: string | StaticImageData;
-  stages: string[];
+  description: string;
 }
 
-function CompanyCard({ companyName, imageSrc, stages }: CompanyCardProps) {
+function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const router = useRouter();
@@ -71,14 +71,9 @@ function CompanyCard({ companyName, imageSrc, stages }: CompanyCardProps) {
         </button>
       </div>
 
-      {/* Stages */}
+      {/* Description */}
       <div className="text-sm text-gray-700 w-full">
-        <p className="font-semibold text-black">Stages we deliver:</p>
-        <ul className="list-disc list-inside">
-          {stages.map((stage, idx) => (
-            <li key={idx}>{stage}</li>
-          ))}
-        </ul>
+        <p>{description}</p>
       </div>
     </div>
   );

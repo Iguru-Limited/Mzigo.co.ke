@@ -3,7 +3,6 @@ import React from "react";
 import { MdAccountCircle } from "react-icons/md";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import SearchBar from "./SearchBar"
 
 function Header() {
   const router = useRouter();
@@ -23,7 +22,6 @@ function Header() {
 
         {/* Account Icon */}
         <div className="flex items-center space-x-4">
-          <SearchBar placeholder="Enter the tracking number"/>
           <MdAccountCircle className="text-4xl sm:text-4xl md:text-5xl text-gray-700 cursor-pointer" />
         </div>
       </header>

@@ -23,7 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       className="relative w-full max-w-4xl mx-auto"
     >
       {/* Input Field */}
-      <input
+      {/* <input
         type="text"
         placeholder={placeholder}
         value={query}
@@ -34,11 +34,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                    py-2 sm:py-2.5 md:py-3
                    shadow-sm outline-none focus:ring-2 focus:ring-[#2c3e50]"
         aria-label="Search input"
-      />
+      /> */}
 
       {/* Track Button inside input */}
       <button
-        type="submit"
         className="absolute right-1 top-1/2 -translate-y-1/2
                    bg-[#2c3e50] text-white font-medium rounded-full
                    px-4 py-1.5 text-xs 
