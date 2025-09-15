@@ -30,23 +30,21 @@ function Footer() {
         {partners.map((partner) => (
           <div
             key={partner.id}
-            className="w-32 h-32 flex flex-col items-center justify-center relative group cursor-pointer"
+            className="w-32 flex flex-col items-center justify-center cursor-pointer"
             onClick={() => handleLogoClick(partner.name)}
           >
-            <Image
-              src={partner.logo}
-              alt={partner.name}
-              fill
-              style={{ objectFit: "cover", borderRadius: "50%" }}
-              sizes="(max-width: 768px) 100vw, 200px"
-              priority={false}
-              className="rounded-full"
-            />
-            <span className="sr-only">{partner.name}</span>
-            {/* Show name on hover */}
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
-              {partner.name}
+            <div className="w-32 h-32 relative">
+              <Image
+                src={partner.logo}
+                alt={partner.name}
+                fill
+                style={{ objectFit: "cover", borderRadius: "50%" }}
+                sizes="(max-width: 768px) 100vw, 200px"
+                priority={false}
+                className="rounded-full"
+              />
             </div>
+            <span className="mt-2 text-center text-sm text-black">{partner.name}</span>
           </div>
         ))}
       </div>
