@@ -84,6 +84,7 @@ function SendMzigoPage({ params }: PageProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    localStorage.setItem("registeredParcel", JSON.stringify(formData));
     console.log("Form submitted:", formData);
     alert("Mzigo Registered successfully!");
   };
@@ -194,7 +195,7 @@ function SendMzigoPage({ params }: PageProps) {
               rows={3}
               required
             />
-            
+
             <input
               type="number"
               name="parcelValue"
