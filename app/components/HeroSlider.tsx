@@ -9,7 +9,7 @@ export default function HeroSlider() {
   const router = useRouter();
 
   return (
-    <section className="relative w-full h-[80vh] rounded-lg shadow-2xl">
+    <section className="relative w-full h-[50vh] rounded-lg shadow-2xl">
       {/* Single Image with Rounded Corners */}
       <div className="relative w-full h-full rounded-xl overflow-hidden">
         <Image
