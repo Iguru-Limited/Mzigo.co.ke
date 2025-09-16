@@ -8,11 +8,11 @@ function Header() {
   const router = useRouter();
   return (
     <div className="bg-white drop-shadow-sm sticky top-0 z-50">
-      <header className="flex justify-between items-center px-4 py-3 max-w-6xl mx-auto">
+      <header className="flex justify-between items-center p-3 sm:p-4 lg:p-6 container mx-auto">
         {/* Logo */}
         <div onClick={() => router.push("/")} className="cursor-pointer">
           <Image
-            src="/logo.jpg"
+            src="/mzigo_logo.jpg"
             alt="logo"
             width={64}
             height={64}
@@ -23,7 +23,7 @@ function Header() {
         {/* Account Icon */}
         <div className="flex items-center space-x-4">
           <MdAccountCircle
-            className="text-4xl sm:text-4xl md:text-5xl text-gray-700 cursor-pointer"
+            className="text-4xl sm:text-4xl md:text-5xl text-green-600 hover:bg-green-700 cursor-pointer"
             onClick={() => {
               // Navigate to profile page
               router.push("/profile");
