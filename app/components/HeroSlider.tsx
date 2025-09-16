@@ -11,7 +11,7 @@ export default function HeroSlider() {
   return (
     <section className="relative w-full h-[50vh] rounded-lg shadow-2xl">
       {/* Single Image with Rounded Corners */}
-      <div className="relative w-full h-full rounded-xl overflow-hidden">
+      <div className="relative w-full h-full rounded-xl overflow-hidden flex flex-row justify-center">
         <Image
           src="/delivery.jpg"
           alt="Parcel Delivery"
