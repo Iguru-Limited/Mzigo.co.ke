@@ -23,7 +23,7 @@ function Header() {
         {/* Account Icon */}
         <div className="flex items-center space-x-4">
           <MdAccountCircle
-            className="text-4xl sm:text-4xl md:text-5xl text-gray-700 cursor-pointer"
+            className="text-4xl sm:text-4xl md:text-5xl text-green-600 hover:bg-green-700 cursor-pointer"
             onClick={() => {
               // Navigate to profile page
               router.push("/profile");
