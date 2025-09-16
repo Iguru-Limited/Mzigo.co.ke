@@ -82,9 +82,27 @@ function SendMzigoPage({ params }: PageProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Utility to get cookie by name
+  const getCookie = (name: string): string | null => {
+    if (typeof document === "undefined") return null;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()!.split(";").shift() || null;
+    return null;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("registeredParcel", JSON.stringify(formData));
+    const deviceId = getCookie("device_id") || "unknown_device";
+
+    // Save parcel data to localStorage keyed by deviceId
+    const storageKey = `registeredParcels_${deviceId}`;
+    const existingParcels = JSON.parse(
+      localStorage.getItem(storageKey) || "[]"
+    );
+    existingParcels.push(formData);
+    localStorage.setItem(storageKey, JSON.stringify(existingParcels));
+
     console.log("Form submitted:", formData);
     alert("Mzigo Registered successfully!");
   };
