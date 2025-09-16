@@ -8,7 +8,7 @@ function Header() {
   const router = useRouter();
   return (
     <div className="bg-white drop-shadow-sm sticky top-0 z-50">
-      <header className="flex justify-between items-center px-4 py-3 max-w-6xl mx-auto">
+      <header className="flex justify-between items-center p-3 sm:p-4 lg:p-6 container mx-auto">
         {/* Logo */}
         <div onClick={() => router.push("/")} className="cursor-pointer">
           <Image

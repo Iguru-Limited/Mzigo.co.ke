@@ -29,7 +29,7 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
 
   return (
     <div
-      className="border border-gray-300 rounded-lg p-4 bg-white shadow-md 
+      className="border border-gray-300 rounded-lg p-3 sm:p-4 lg:p-6 container mx-auto bg-white shadow-md 
                  flex flex-col items-start transform transition duration-300 ease-in-out 
                  hover:scale-[1.02] hover:shadow-lg"
     >
