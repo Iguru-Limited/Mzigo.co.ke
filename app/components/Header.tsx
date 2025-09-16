@@ -12,7 +12,7 @@ function Header() {
         {/* Logo */}
         <div onClick={() => router.push("/")} className="cursor-pointer">
           <Image
-            src="/logo.jpg"
+            src="/mzigo_logo.jpg"
             alt="logo"
             width={64}
             height={64}
