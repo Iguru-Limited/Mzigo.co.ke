@@ -9,9 +9,9 @@ export default function HeroSlider() {
   const router = useRouter();
 
   return (
-    <section className="relative w-full h-[80vh] rounded-lg shadow-2xl">
+    <section className="relative w-full h-[40vh] rounded-lg shadow-2xl">
       {/* Single Image with Rounded Corners */}
-      <div className="relative w-full h-full rounded-xl overflow-hidden">
+      <div className="relative w-full h-full rounded-xl overflow-hidden flex flex-row justify-center">
         <Image
           src="/delivery.jpg"
           alt="Parcel Delivery"
@@ -30,7 +30,7 @@ export default function HeroSlider() {
         </h1>
 
         {/* Buttons - Responsive Layout */}
-        <div className="flex flex-col sm:flex-row items-center mt-[10rem] mb-[-3rem] space-y-4 sm:space-y-0 sm:space-x-3 w-full max-w-2xl px-4">
+        <div className="flex flex-col sm:flex-row items-center mt-[5rem]  space-y-4 sm:space-y-0 sm:space-x-3 w-full max-w-2xl px-4">
           <button
             onClick={() => {
               router.push("/send-mzigo");
