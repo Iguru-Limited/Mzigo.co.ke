@@ -71,6 +71,7 @@ function SendMzigoPage({ params }: PageProps) {
     parcelValue: "",
     // Payment Details
     paymentMethod: "cash",
+    company: companyName,
   });
 
   const handleChange = (
