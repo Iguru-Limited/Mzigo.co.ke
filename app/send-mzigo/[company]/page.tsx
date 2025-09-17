@@ -91,20 +91,34 @@ function SendMzigoPage({ params }: PageProps) {
     return null;
   };
 
+  // Function to generate a random tracking number
+  const generateTrackingNumber = (): string => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let trackingNumber = "";
+    for (let i = 0; i < 10; i++) {
+      trackingNumber += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return trackingNumber;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const deviceId = getCookie("device_id") || "unknown_device";
+
+    // Generate tracking number and add to formData
+    const trackingNumber = generateTrackingNumber();
+    const formDataWithTracking = { ...formData, trackingNumber };
 
     // Save parcel data to localStorage keyed by deviceId
     const storageKey = `registeredParcels_${deviceId}`;
     const existingParcels = JSON.parse(
       localStorage.getItem(storageKey) || "[]"
     );
-    existingParcels.push(formData);
+    existingParcels.push(formDataWithTracking);
     localStorage.setItem(storageKey, JSON.stringify(existingParcels));
 
-    console.log("Form submitted:", formData);
-    alert("Mzigo Registered successfully!");
+    console.log("Form submitted:", formDataWithTracking);
+    alert(`Mzigo Registered successfully! Your tracking number is: ${trackingNumber}`);
   };
 
   return (

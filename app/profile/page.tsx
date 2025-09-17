@@ -12,6 +12,7 @@ interface Parcel {
   parcelDescription: string;
   parcelValue: string;
   paymentMethod: string;
+  trackingNumber?: string;
 }
 
 const ProfilePage: React.FC = () => {
@@ -73,6 +74,10 @@ const ProfilePage: React.FC = () => {
                 <div>
                   <h3 className="font-semibold">Payment Details</h3>
                   <p>Method: {parcel.paymentMethod}</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Tracking Number</h3>
+                  <p>{parcel.trackingNumber || "N/A"}</p>
                 </div>
               </div>
             </div>
