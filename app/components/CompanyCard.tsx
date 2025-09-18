@@ -26,6 +26,9 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
     const companySlug = companyName.toLowerCase().replace(/\s+/g, "-");
     router.push(`/send-mzigo/${companySlug}`);
   };
+  const handleTrackClick =  () =>{
+    router.push('/track-mzigo')
+  }
 
   return (
     <div
@@ -66,7 +69,7 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
           >
             Send
           </button>
-          <button
+          <button onClick={handleTrackClick}
             className="bg-green-600 text-white font-semibold text-lg px-7 py-3 rounded-full shadow-lg 
                        hover:bg-green-900 transition transform hover:scale-110 cursor-pointer"
           >
