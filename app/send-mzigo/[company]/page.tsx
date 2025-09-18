@@ -1,11 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
+import { createInitialPipelineStatus, PipelineStatus } from "../../utils/pipelineManager";
 
 interface PageProps {
   params: {
     company: string;
   };
+}
+
+interface Parcel {
+  senderName: string;
+  senderPhone: string;
+  senderStage: string;
+  receiverName: string;
+  receiverPhone: string;
+  receiverStage: string;
+  parcelDescription: string;
+  parcelValue: string;
+  paymentMethod: string;
+  trackingNumber: string;
+  company: string;
+  pipelineStatus: PipelineStatus;
+  createdAt: string;
 }
 
 const companies = [
@@ -106,20 +123,50 @@ function SendMzigoPage({ params }: PageProps) {
     e.preventDefault();
     const deviceId = getCookie("device_id") || "unknown_device";
 
-    // Generate tracking number and add to formData
+    // Generate tracking number and create initial pipeline status
     const trackingNumber = generateTrackingNumber();
-    const formDataWithTracking = { ...formData, trackingNumber };
+    const pipelineStatus = createInitialPipelineStatus();
+    const createdAt = new Date().toISOString();
+
+    // Create complete parcel object with pipeline status
+    const parcelData: Parcel = {
+      ...formData,
+      trackingNumber,
+      pipelineStatus,
+      createdAt
+    };
 
     // Save parcel data to localStorage keyed by deviceId
     const storageKey = `registeredParcels_${deviceId}`;
     const existingParcels = JSON.parse(
       localStorage.getItem(storageKey) || "[]"
     );
-    existingParcels.push(formDataWithTracking);
+    existingParcels.push(parcelData);
     localStorage.setItem(storageKey, JSON.stringify(existingParcels));
 
-    console.log("Form submitted:", formDataWithTracking);
-    alert(`Mzigo Registered successfully! Your tracking number is: ${trackingNumber}`);
+    console.log("Form submitted:", parcelData);
+    
+    // Show success message with tracking number and initial status
+    alert(
+      `Mzigo Registered successfully!\n\n` +
+      `Tracking Number: ${trackingNumber}\n` +
+      `Initial Status: ${pipelineStatus.registered.label}\n` +
+      `Created: ${new Date(createdAt).toLocaleString()}`
+    );
+
+    // Reset form
+    setFormData({
+      senderName: "",
+      senderPhone: "",
+      senderStage: "",
+      receiverName: "",
+      receiverPhone: "",
+      receiverStage: "",
+      parcelDescription: "",
+      parcelValue: "",
+      paymentMethod: "cash",
+      company: companyName,
+    });
   };
 
   return (
