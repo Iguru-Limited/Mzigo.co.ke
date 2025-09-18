@@ -12,6 +12,8 @@ interface Parcel {
   parcelDescription: string;
   parcelValue: string;
   paymentMethod: string;
+  trackingNumber?: string;
+  company: string;
 }
 
 const ProfilePage: React.FC = () => {
@@ -51,7 +53,7 @@ const ProfilePage: React.FC = () => {
         <div className="space-y-4">
           {parcels.map((parcel, index) => (
             <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Parcel {index + 1}</h2>
+              <h2 className="text-xl font-semibold mb-4">Sent Mzigo with {parcel.company}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h3 className="font-semibold">Sender Details</h3>
@@ -73,6 +75,10 @@ const ProfilePage: React.FC = () => {
                 <div>
                   <h3 className="font-semibold">Payment Details</h3>
                   <p>Method: {parcel.paymentMethod}</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Tracking Number</h3>
+                  <p>{parcel.trackingNumber || "N/A"}</p>
                 </div>
               </div>
             </div>
