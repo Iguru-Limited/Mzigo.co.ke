@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import { createInitialPipelineStatus, PipelineStatus } from "../../utils/pipelineManager";
+import React, { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { createInitialPipelineStatus, type PipelineStatus } from "../../utils/pipelineManager";
 
 interface PageProps {
   params: {
@@ -25,54 +26,25 @@ interface Parcel {
   createdAt: string;
 }
 
-const companies = [
-  {
-    id: 1,
-    name: "Lopha travelers ltd",
-    image: "/lopha-travel-ltd.jpg",
-    stages: ["Nairobi", "Ruiru", "Thika"],
-  },
-  {
-    id: 2,
-    name: "Kasese",
-    image: "/kasese logo.jpeg",
-    stages: ["Nairobi", "Naivasha"],
-  },
-  {
-    id: 3,
-    name: "Chania",
-    image: "/Chania logo.jpeg",
-    stages: ["Nairobi", "Emali", "Mombasa"],
-  },
-  {
-    id: 4,
-    name: "Kangema",
-    image: "/Kangema.jpeg",
-    stages: ["Nairobi", "Kangema", "Murang'a"],
-  },
-  {
-    id: 5,
-    name: "Ungwana",
-    image: "/ungwana logo.jpeg",
-    stages: ["Nairobi", "Embu", "Meru"],
-  },
-  {
-    id: 6,
-    name: "Metro Trans",
-    image: "/metro trans.jpeg",
-    stages: ["Nairobi", "Junction-mall", "Ngong-road", "Ngong"],
-  },
-];
+type Office = { id: number | string; name: string };
+type Destination = { id: number | string; name: string; route?: number | null };
 
 function SendMzigoPage({ params }: PageProps) {
   const { company } = params;
-  const companyName = company
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize words
-
-  const currentCompany = companies.find(
-    (c) => c.name.toLowerCase() === companyName.toLowerCase()
+  const companyName = useMemo(
+    () => company.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+    [company]
   );
+  const searchParams = useSearchParams();
+  const companyId = searchParams.get("company_id") || "1";
+
+  const [requirements, setRequirements] = useState<{
+    offices: Office[];
+    destinations: Destination[];
+    payment_methods: string[];
+  }>({ offices: [], destinations: [], payment_methods: [] });
+  const [loadingReq, setLoadingReq] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     // Sender Details
@@ -87,14 +59,12 @@ function SendMzigoPage({ params }: PageProps) {
     parcelDescription: "",
     parcelValue: "",
     // Payment Details
-    paymentMethod: "cash",
+    paymentMethod: "",
     company: companyName,
   });
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -119,6 +89,48 @@ function SendMzigoPage({ params }: PageProps) {
     return trackingNumber;
   };
 
+  useEffect(() => {
+    let abort = false;
+    const load = async () => {
+      try {
+        setLoadingReq(true);
+        setError(null);
+        const res = await fetch(
+          `/api/requirements?company_id=${encodeURIComponent(companyId)}`,
+          { cache: "no-store" }
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const offices: Office[] = Array.isArray(json?.offices) ? json.offices : [];
+        const destinations: Destination[] = Array.isArray(json?.destinations)
+          ? json.destinations
+          : [];
+        const payment_methods: string[] = Array.isArray(json?.payment_methods)
+          ? json.payment_methods
+          : [];
+        if (!abort) {
+          setRequirements({ offices, destinations, payment_methods });
+          // Set default payment method if empty
+          if (!formData.paymentMethod && payment_methods.length > 0) {
+            setFormData((prev) => ({ ...prev, paymentMethod: payment_methods[0] }));
+          }
+        }
+      } catch (e: any) {
+        if (!abort) {
+          setRequirements({ offices: [], destinations: [], payment_methods: [] });
+          setError(e?.message ?? "Failed to load requirements");
+        }
+      } finally {
+        if (!abort) setLoadingReq(false);
+      }
+    };
+    load();
+    return () => {
+      abort = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [companyId]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const deviceId = getCookie("device_id") || "unknown_device";
@@ -133,25 +145,23 @@ function SendMzigoPage({ params }: PageProps) {
       ...formData,
       trackingNumber,
       pipelineStatus,
-      createdAt
+      createdAt,
     };
 
     // Save parcel data to localStorage keyed by deviceId
     const storageKey = `registeredParcels_${deviceId}`;
-    const existingParcels = JSON.parse(
-      localStorage.getItem(storageKey) || "[]"
-    );
+    const existingParcels = JSON.parse(localStorage.getItem(storageKey) || "[]");
     existingParcels.push(parcelData);
     localStorage.setItem(storageKey, JSON.stringify(existingParcels));
 
     console.log("Form submitted:", parcelData);
-    
+
     // Show success message with tracking number and initial status
     alert(
       `Mzigo Registered successfully!\n\n` +
-      `Tracking Number: ${trackingNumber}\n` +
-      `Initial Status: ${pipelineStatus.registered.label}\n` +
-      `Created: ${new Date(createdAt).toLocaleString()}`
+        `Tracking Number: ${trackingNumber}\n` +
+        `Initial Status: ${pipelineStatus.registered.label}\n` +
+        `Created: ${new Date(createdAt).toLocaleString()}`
     );
 
     // Reset form
@@ -164,7 +174,7 @@ function SendMzigoPage({ params }: PageProps) {
       receiverStage: "",
       parcelDescription: "",
       parcelValue: "",
-      paymentMethod: "cash",
+      paymentMethod: requirements.payment_methods[0] ?? "",
       company: companyName,
     });
   };
@@ -175,12 +185,16 @@ function SendMzigoPage({ params }: PageProps) {
         Send with {companyName}
       </h1>
 
+      {error && (
+        <div className="mb-4 p-3 rounded bg-red-50 text-red-700 border border-red-200">
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Sender Details */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-black">
-            Sender Details
-          </h2>
+          <h2 className="text-2xl font-semibold mb-4 text-black">Sender Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
@@ -207,11 +221,12 @@ function SendMzigoPage({ params }: PageProps) {
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
               required
+              disabled={loadingReq}
             >
-              <option value="">Select Sender Stage</option>
-              {currentCompany?.stages.map((stage, idx) => (
-                <option key={idx} value={stage}>
-                  {stage}
+              <option value="">Select Sender Office</option>
+              {requirements.offices.map((o) => (
+                <option key={o.id} value={o.name}>
+                  {o.name}
                 </option>
               ))}
             </select>
@@ -220,9 +235,7 @@ function SendMzigoPage({ params }: PageProps) {
 
         {/* Receiver Details */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-black">
-            Receiver Details
-          </h2>
+          <h2 className="text-2xl font-semibold mb-4 text-black">Receiver Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
@@ -249,11 +262,12 @@ function SendMzigoPage({ params }: PageProps) {
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
               required
+              disabled={loadingReq}
             >
-              <option value="">Select Receiver Stage</option>
-              {currentCompany?.stages.map((stage, idx) => (
-                <option key={idx} value={stage}>
-                  {stage}
+              <option value="">Select Receiver Destination</option>
+              {requirements.destinations.map((d) => (
+                <option key={d.id} value={d.name}>
+                  {d.name}
                 </option>
               ))}
             </select>
@@ -262,9 +276,7 @@ function SendMzigoPage({ params }: PageProps) {
 
         {/* Parcel Details */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-black">
-            Parcel Details
-          </h2>
+          <h2 className="text-2xl font-semibold mb-4 text-black">Parcel Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <textarea
               name="parcelDescription"
@@ -290,18 +302,22 @@ function SendMzigoPage({ params }: PageProps) {
 
         {/* Payment Details */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-black">
-            Payment Details
-          </h2>
+          <h2 className="text-2xl font-semibold mb-4 text-black">Payment Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <select
               name="paymentMethod"
               value={formData.paymentMethod}
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
+              required
+              disabled={loadingReq}
             >
-              <option value="cash">Cash on Delivery</option>
-              <option value="mpesa">M-Pesa</option>
+              <option value="">Select Payment Method</option>
+              {requirements.payment_methods.map((m, idx) => (
+                <option key={idx} value={m}>
+                  {m}
+                </option>
+              ))}
             </select>
           </div>
         </div>
