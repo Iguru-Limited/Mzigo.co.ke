@@ -88,7 +88,7 @@ function Footer() {
                       name={partner.name}
                       round={true}
                       size="128"
-                      color="#111827"
+                      color="#12FF6B"
                       fgColor="#ffffff"
                     />
                   )}
