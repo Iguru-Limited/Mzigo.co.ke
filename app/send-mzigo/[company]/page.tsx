@@ -179,6 +179,24 @@ function SendMzigoPage() {
     });
   };
 
+  // Build regex patterns to enforce selection from suggestions
+  const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const makePattern = (values: string[]) =>
+    values.length ? `^(?:${values.map((v) => escapeRegex(v)).join("|")})$` : undefined;
+
+  const officePattern = useMemo(
+    () => makePattern(requirements.offices.map((o) => o.name)),
+    [requirements.offices]
+  );
+  const destinationPattern = useMemo(
+    () => makePattern(requirements.destinations.map((d) => d.name)),
+    [requirements.destinations]
+  );
+  const paymentPattern = useMemo(
+    () => makePattern(requirements.payment_methods),
+    [requirements.payment_methods]
+  );
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 text-black">
       <h1 className="text-3xl font-bold text-center mb-8 text-black">
@@ -225,6 +243,8 @@ function SendMzigoPage() {
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
               required
               disabled={loadingReq}
+              pattern={officePattern}
+              title="Please select a value from the suggestions"
             />
             <datalist id="senderStageOptions">
               {requirements.offices.map((o) => (
@@ -267,6 +287,8 @@ function SendMzigoPage() {
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
               required
               disabled={loadingReq}
+              pattern={destinationPattern}
+              title="Please select a value from the suggestions"
             />
             <datalist id="receiverStageOptions">
               {requirements.destinations.map((d) => (
@@ -316,6 +338,8 @@ function SendMzigoPage() {
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
               required
               disabled={loadingReq}
+              pattern={paymentPattern}
+              title="Please select a value from the suggestions"
             />
             <datalist id="paymentMethodOptions">
               {requirements.payment_methods.map((m, idx) => (
