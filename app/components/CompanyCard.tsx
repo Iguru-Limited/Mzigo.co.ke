@@ -5,11 +5,12 @@ import Image, { StaticImageData } from "next/image";
 import { FiHeart } from "react-icons/fi";
 import { AiFillHeart } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import Avatar from "react-avatar";
 
 interface CompanyCardProps {
   companyName: string;
-  imageSrc: string | StaticImageData;
-  description: string;
+  imageSrc?: string | StaticImageData;
+  description?: string;
 }
 
 function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
@@ -42,14 +43,26 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
       </h3>
 
       {/* Image Section */}
-      <div className="w-full rounded-lg overflow-hidden mb-2 relative">
-        <Image
-          src={imageSrc}
-          alt={companyName}
-          width={500}
-          height={200}
-          className="w-full h-52 object-cover rounded-lg"
-        />
+      <div className="w-full rounded-lg overflow-hidden mb-2 relative flex items-center justify-center bg-gray-50">
+        {imageSrc ? (
+          <Image
+            src={imageSrc}
+            alt={companyName}
+            width={500}
+            height={200}
+            className="w-full h-52 object-cover rounded-lg"
+          />
+        ) : (
+          <div className="w-full h-52 flex items-center justify-center">
+            <Avatar
+              name={companyName}
+              round={true}
+              size="160"
+              color="#12FF6B"
+              fgColor="#ffffff"
+            />
+          </div>
+        )}
 
         {/* Like Button */}
         <button
@@ -80,7 +93,7 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
 
       {/* Description */}
       <div className="text-sm text-gray-700 w-full">
-        <p>{description}</p>
+        <p>{description ?? "Trusted logistics partner"}</p>
       </div>
     </div>
   );

@@ -1,130 +1,67 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CompanyCard from "./CompanyCard";
 
-const companies = [
-  {
-    id: 1,
-    name: "Lopha travelers ltd",
-    image: "/lopha-travel-ltd.jpg",
-    stages: ["Nairobi", "Ruiru", "Thika"],
-    description:
-      "Reliable bus services connecting Nairobi to Ruiru and Thika with comfortable and timely travel.",
-  },
-  {
-    id: 2,
-    name: "Kasese",
-    image: "/kasese logo.jpeg",
-    stages: ["Nairobi", "Naivasha"],
-    description:
-      "Efficient transport solutions from Nairobi to Naivasha, ensuring safe and quick deliveries.",
-  },
-  {
-    id: 3,
-    name: "Chania",
-    image: "/Chania logo.jpeg",
-    stages: ["Nairobi", "Emali", "Mombasa"],
-    description:
-      "Trusted partner for parcel delivery from Nairobi through Emali to Mombasa coast.",
-  },
-  {
-    id: 4,
-    name: "Kangema",
-    image: "/Kangema.jpeg",
-    stages: ["Nairobi", "Kangema", "Murang'a"],
-    description:
-      "Connecting Nairobi to Kangema and Murang'a with dependable and affordable transport services.",
-  },
-  {
-    id: 5,
-    name: "Ungwana",
-    image: "/ungwana logo.jpeg",
-    stages: ["Nairobi", "Embu", "Meru"],
-    description:
-      "Comprehensive delivery network linking Nairobi to Embu and Meru regions.",
-  },
-  {
-    id: 6,
-    name: "Metro Trans",
-    image: "/metro trans.jpeg",
-    stages: ["Nairobi", "Junction-mall", "Ngong-road", "Ngong"],
-    description:
-      "Urban and suburban transport expert, serving Nairobi and key areas like Ngong Road.",
-  },
-];
+type PartnerItem = { id: string | number; name: string; logo?: string };
 
 function Landingpage() {
-  const [from, setFrom] = useState("Nairobi");
-  const [to, setTo] = useState("");
+  const [partners, setPartners] = useState<PartnerItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // collect all unique stages
-  const allStages = Array.from(new Set(companies.flatMap((c) => c.stages)));
+  useEffect(() => {
+    let abort = false;
+    const load = async () => {
+      try {
+        console.time("landing:fetch-partners");
+        const res = await fetch("/api/partners", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const parsed: PartnerItem[] = Array.isArray(json?.partners)
+          ? json.partners
+          : [];
+        if (!abort) setPartners(parsed);
+      } catch (e) {
+        console.error("[landing] Failed to load partners", e);
+        if (!abort) setPartners([]);
+      } finally {
+        if (!abort) setLoading(false);
+        console.timeEnd("landing:fetch-partners");
+      }
+    };
+    load();
+    return () => {
+      abort = true;
+    };
+  }, []);
 
-  // filter companies
-  const filteredCompanies = companies.filter((company) => {
-    if (!from && !to) return true; // show all if no filter
-    const hasFrom = from ? company.stages.includes(from) : true;
-    const hasTo = to ? company.stages.includes(to) : true;
-    return hasFrom && hasTo;
-  });
+  const data = useMemo(() => partners, [partners]);
 
   return (
     <div className="p-3 sm:p-4 lg:p-6 container mx-auto">
-      {/* Filter Form */}
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        className="flex flex-col sm:flex-row justify-center items-center gap-4 
-                   mb-8 p-4 bg-white shadow-md rounded-lg"
-      >
-        {/* From select */}
-        <div className="flex items-center gap-2 text-black">
-          <label className="font-bold text-black text-xl">From:</label>
-          <select
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 text-lg font-semibold text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
-          >
-            <option value="">Any</option>
-            {allStages.map((stage, idx) => (
-              <option key={idx} value={stage}>
-                {stage}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* To select */}
-        <div className="flex items-center gap-2 text-black">
-          <label className="font-boldb text-lg">To:</label>
-          <select
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            className="border border-gray-300 rounded-md font-bold px-3 py-2 text-lgb text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
-          >
-            <option value="">Any</option>
-            {allStages.map((stage, idx) => (
-              <option key={idx} value={stage}>
-                {stage}
-              </option>
-            ))}
-          </select>
-        </div>
-      </form>
+      {/* Filter Form */}   
 
       {/* Companies */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredCompanies.length > 0 ? (
-          filteredCompanies.map((company) => (
+        {loading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
+              <div className="h-6 w-40 bg-gray-200 rounded mb-4 animate-pulse" />
+              <div className="w-full h-52 bg-gray-200 rounded-lg animate-pulse" />
+              <div className="mt-4 h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
+            </div>
+          ))
+        ) : data.length > 0 ? (
+          data.map((p) => (
             <CompanyCard
-              key={company.id}
-              companyName={company.name}
-              imageSrc={company.image}
-              description={company.description}
+              key={p.id}
+              companyName={p.name}
+              imageSrc={p.logo}
+              description={""}
             />
           ))
         ) : (
           <p className="text-gray-500 text-center col-span-full">
-            No companies found for this route.
+            No partners found.
           </p>
         )}
       </div>
