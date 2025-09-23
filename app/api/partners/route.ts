@@ -10,16 +10,13 @@ export const dynamic = "force-dynamic";
 
 const logosDir = path.join(process.cwd(), "public", "partners");
 
-let cachedLogoFiles: string[] | null = null;
 function readLogoFiles(): string[] {
-  if (cachedLogoFiles) return cachedLogoFiles;
   try {
-    const files = fs.readdirSync(logosDir, { withFileTypes: true })
+    return fs
+      .readdirSync(logosDir, { withFileTypes: true })
       .filter((d) => d.isFile())
       .map((d) => d.name)
       .filter((name) => /\.(png|jpe?g|webp|gif|svg)$/i.test(name));
-    cachedLogoFiles = files;
-    return files;
   } catch {
     return [];
   }
