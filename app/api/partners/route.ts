@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { MZIGO_BASE_URL, JSON_HEADERS } from "../config";
 
 type RawPartner = Record<string, any>;
 type Partner = { id: string | number; name: string; logo?: string };
@@ -66,9 +67,9 @@ export async function GET() {
     console.time("api:partners");
     const logoFiles = readLogoFiles();
     console.log(`[api/partners] Starting fetch. Local logos: ${logoFiles.length}`);
-    const res = await fetch("https://mzigo.ke/front_ep/", {
+    const res = await fetch(MZIGO_BASE_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: JSON_HEADERS,
       body: JSON.stringify({ route: "ALL-PARTNERS" }),
       // Avoid caching issues since upstream is a POST endpoint
       cache: "no-store",
