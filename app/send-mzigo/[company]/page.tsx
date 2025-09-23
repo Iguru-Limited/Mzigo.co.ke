@@ -215,21 +215,22 @@ function SendMzigoPage({ params }: PageProps) {
               required
             />
 
-            <select
+            <input
+              type="text"
               name="senderStage"
+              list="senderStageOptions"
+              placeholder="Sender Office/Stage"
               value={formData.senderStage}
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
               required
               disabled={loadingReq}
-            >
-              <option value="">Select Sender Office</option>
+            />
+            <datalist id="senderStageOptions">
               {requirements.offices.map((o) => (
-                <option key={o.id} value={o.name}>
-                  {o.name}
-                </option>
+                <option key={o.id} value={o.name} />
               ))}
-            </select>
+            </datalist>
           </div>
         </div>
 
@@ -256,21 +257,22 @@ function SendMzigoPage({ params }: PageProps) {
               required
             />
 
-            <select
+            <input
+              type="text"
               name="receiverStage"
+              list="receiverStageOptions"
+              placeholder="Receiver Destination/Stage"
               value={formData.receiverStage}
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
               required
               disabled={loadingReq}
-            >
-              <option value="">Select Receiver Destination</option>
+            />
+            <datalist id="receiverStageOptions">
               {requirements.destinations.map((d) => (
-                <option key={d.id} value={d.name}>
-                  {d.name}
-                </option>
+                <option key={d.id} value={d.name} />
               ))}
-            </select>
+            </datalist>
           </div>
         </div>
 
@@ -304,21 +306,22 @@ function SendMzigoPage({ params }: PageProps) {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4 text-black">Payment Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <select
+            <input
+              type="text"
               name="paymentMethod"
+              list="paymentMethodOptions"
+              placeholder="Payment Method"
               value={formData.paymentMethod}
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
               required
               disabled={loadingReq}
-            >
-              <option value="">Select Payment Method</option>
+            />
+            <datalist id="paymentMethodOptions">
               {requirements.payment_methods.map((m, idx) => (
-                <option key={idx} value={m}>
-                  {m}
-                </option>
+                <option key={idx} value={m} />
               ))}
-            </select>
+            </datalist>
           </div>
         </div>
 
