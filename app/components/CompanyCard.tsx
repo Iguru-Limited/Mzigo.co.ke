@@ -11,9 +11,10 @@ interface CompanyCardProps {
   companyName: string;
   imageSrc?: string | StaticImageData;
   description?: string;
+  companyId?: string | number;
 }
 
-function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
+function CompanyCard({ companyName, imageSrc, description, companyId }: CompanyCardProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const router = useRouter();
@@ -25,7 +26,8 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
 
   const handleSendClick = () => {
     const companySlug = companyName.toLowerCase().replace(/\s+/g, "-");
-    router.push(`/send-mzigo/${companySlug}`);
+    const query = companyId != null ? `?company_id=${encodeURIComponent(String(companyId))}` : "";
+    router.push(`/send-mzigo/${companySlug}${query}`);
   };
   const handleTrackClick =  () =>{
     router.push('/track-mzigo')
@@ -53,13 +55,14 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
             className="w-full h-52 object-cover rounded-lg"
           />
         ) : (
-          <div className="w-full h-52 flex items-center justify-center">
+          <div className="w-full h-52">
             <Avatar
               name={companyName}
-              round={true}
-              size="160"
+              round={false}
+              size="100%"
               color="#12FF6B"
               fgColor="#ffffff"
+              className="rounded-lg"
             />
           </div>
         )}

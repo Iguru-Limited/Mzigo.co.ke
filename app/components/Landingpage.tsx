@@ -57,6 +57,7 @@ function Landingpage() {
               companyName={p.name}
               imageSrc={p.logo}
               description={""}
+              companyId={p.id}
             />
           ))
         ) : (

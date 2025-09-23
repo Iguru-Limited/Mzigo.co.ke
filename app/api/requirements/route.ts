@@ -5,20 +5,30 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function parseRequirements(payload: any) {
-  const list = Array.isArray(payload)
-    ? payload
-    : Array.isArray(payload?.data)
-    ? payload.data
-    : Array.isArray(payload?.requirements)
-    ? payload.requirements
-    : Array.isArray(payload?.result)
-    ? payload.result
+  const root = payload?.data ?? payload ?? {};
+  const company_id = root?.company_id ?? root?.companyId ?? null;
+  const officesSrc = Array.isArray(root?.offices) ? root.offices : [];
+  const destinationsSrc = Array.isArray(root?.destinations)
+    ? root.destinations
     : [];
-  return list.map((r: any) => ({
-    id: r?.id ?? r?.code ?? r?.key ?? Math.random().toString(36).slice(2),
-    label: r?.label || r?.name || r?.title || String(r ?? ""),
-    value: r?.value ?? true,
+  const paymentsSrc = Array.isArray(root?.payment_methods)
+    ? root.payment_methods
+    : [];
+
+  const offices = officesSrc.map((o: any) => ({
+    id: o?.id ?? o?.code ?? o?.key ?? null,
+    name: o?.name || o?.label || String(o ?? ""),
   }));
+  const destinations = destinationsSrc.map((d: any) => ({
+    id: d?.id ?? d?.code ?? d?.key ?? null,
+    name: d?.name || d?.label || String(d ?? ""),
+    route: d?.route ?? null,
+  }));
+  const payment_methods = paymentsSrc.map((p: any) =>
+    p?.payment_method || p?.name || p?.label || String(p ?? "")
+  );
+
+  return { company_id, offices, destinations, payment_methods };
 }
 
 async function fetchRequirements(company_id: number | string) {
@@ -29,10 +39,10 @@ async function fetchRequirements(company_id: number | string) {
     cache: "no-store",
   });
   if (!res.ok) {
-    return { requirements: [], error: `HTTP ${res.status}` };
+    return { company_id, offices: [], destinations: [], payment_methods: [], error: `HTTP ${res.status}` };
   }
   const json = await res.json();
-  return { requirements: parseRequirements(json) };
+  return parseRequirements(json);
 }
 
 export async function GET(req: NextRequest) {
@@ -42,7 +52,7 @@ export async function GET(req: NextRequest) {
     const data = await fetchRequirements(companyId);
     return NextResponse.json(data, { status: 200 });
   } catch (e: any) {
-    return NextResponse.json({ requirements: [], error: e?.message ?? "failed" }, { status: 200 });
+    return NextResponse.json({ company_id: null, offices: [], destinations: [], payment_methods: [], error: e?.message ?? "failed" }, { status: 200 });
   }
 }
 
@@ -53,6 +63,6 @@ export async function POST(req: NextRequest) {
     const data = await fetchRequirements(companyId);
     return NextResponse.json(data, { status: 200 });
   } catch (e: any) {
-    return NextResponse.json({ requirements: [], error: e?.message ?? "failed" }, { status: 200 });
+    return NextResponse.json({ company_id: null, offices: [], destinations: [], payment_methods: [], error: e?.message ?? "failed" }, { status: 200 });
   }
 }
