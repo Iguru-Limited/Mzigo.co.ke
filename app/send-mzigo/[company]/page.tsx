@@ -1,14 +1,10 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { createInitialPipelineStatus, type PipelineStatus } from "../../utils/pipelineManager";
 
-interface PageProps {
-  params: {
-    company: string;
-  };
-}
+// Page-level dynamic params are accessed via useParams in client components
 
 interface Parcel {
   senderName: string;
@@ -29,8 +25,12 @@ interface Parcel {
 type Office = { id: number | string; name: string };
 type Destination = { id: number | string; name: string; route?: number | null };
 
-function SendMzigoPage({ params }: PageProps) {
-  const { company } = params;
+function SendMzigoPage() {
+  const routeParams = useParams<{ company: string | string[] }>();
+  const companyParam = Array.isArray(routeParams?.company)
+    ? routeParams.company[0]
+    : routeParams?.company || "";
+  const company = companyParam;
   const companyName = useMemo(
     () => company.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
     [company]
