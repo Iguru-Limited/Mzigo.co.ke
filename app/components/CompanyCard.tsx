@@ -53,13 +53,14 @@ function CompanyCard({ companyName, imageSrc, description }: CompanyCardProps) {
             className="w-full h-52 object-cover rounded-lg"
           />
         ) : (
-          <div className="w-full h-52 flex items-center justify-center">
+          <div className="w-full h-52">
             <Avatar
               name={companyName}
-              round={true}
-              size="160"
+              round={false}
+              size="100%"
               color="#12FF6B"
               fgColor="#ffffff"
+              className="rounded-lg"
             />
           </div>
         )}
