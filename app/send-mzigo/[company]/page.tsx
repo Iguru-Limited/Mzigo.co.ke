@@ -15,6 +15,8 @@ interface Parcel {
   receiverStage: string;
   parcelDescription: string;
   parcelValue: string;
+  packageSize: string;
+  specialInstructions: string;
   paymentMethod: string;
   trackingNumber: string;
   company: string;
@@ -58,6 +60,8 @@ function SendMzigoPage() {
     // Parcel Details
     parcelDescription: "",
     parcelValue: "",
+    packageSize: "",
+    specialInstructions: "",
     // Payment Details
     paymentMethod: "",
     company: companyName,
@@ -174,6 +178,8 @@ function SendMzigoPage() {
       receiverStage: "",
       parcelDescription: "",
       parcelValue: "",
+      packageSize: "",
+      specialInstructions: "",
       paymentMethod: requirements.payment_methods[0] ?? "",
       company: companyName,
     });
@@ -320,6 +326,28 @@ function SendMzigoPage() {
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
               required
+            />
+
+            <select
+              name="packageSize"
+              value={formData.packageSize}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
+              required
+            >
+              <option value="">Select Package Size</option>
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+            </select>
+
+            <textarea
+              name="specialInstructions"
+              placeholder="Special Instructions (optional)"
+              value={formData.specialInstructions}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
+              rows={3}
             />
           </div>
         </div>
