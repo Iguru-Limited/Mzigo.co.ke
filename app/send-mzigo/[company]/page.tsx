@@ -133,7 +133,7 @@ function SendMzigoPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const deviceId = getCookie("device_id") || "unknown_device";
+    const temp_id = getCookie("device_id") || "unknown_device";
 
     // Generate tracking number and create initial pipeline status
     const trackingNumber = generateTrackingNumber();
@@ -148,8 +148,8 @@ function SendMzigoPage() {
       createdAt,
     };
 
-    // Save parcel data to localStorage keyed by deviceId
-    const storageKey = `registeredParcels_${deviceId}`;
+    // Save parcel data to localStorage keyed by temp_id
+    const storageKey = `registeredParcels_${temp_id}`;
     const existingParcels = JSON.parse(localStorage.getItem(storageKey) || "[]");
     existingParcels.push(parcelData);
     localStorage.setItem(storageKey, JSON.stringify(existingParcels));
