@@ -46,6 +46,7 @@ function SendMzigoPage() {
     payment_methods: string[];
   }>({ offices: [], destinations: [], payment_methods: [] });
   const [loadingReq, setLoadingReq] = useState<boolean>(true);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -83,15 +84,7 @@ function SendMzigoPage() {
     return null;
   };
 
-  // Function to generate a random tracking number
-  const generateTrackingNumber = (): string => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let trackingNumber = "";
-    for (let i = 0; i < 10; i++) {
-      trackingNumber += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return trackingNumber;
-  };
+
 
   useEffect(() => {
     let abort = false;
@@ -135,54 +128,107 @@ function SendMzigoPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const temp_id = getCookie("device_id") || "unknown_device";
+    
+    // Prevent double submission
+    if (submitting) {
+      return;
+    }
+    
+    setSubmitting(true);
+    setError(null);
 
-    // Generate tracking number and create initial pipeline status
-    const trackingNumber = generateTrackingNumber();
-    const pipelineStatus = createInitialPipelineStatus();
-    const createdAt = new Date().toISOString();
+    try {
+      const temp_id = getCookie("device_id") || "unknown_device";
+      
+      // Get the office_id from the selected office
+      const selectedOffice = requirements.offices.find(office => office.name === formData.senderStage);
+      const office_id = selectedOffice?.id || 1;
 
-    // Create complete parcel object with pipeline status
-    const parcelData: Parcel = {
-      ...formData,
-      trackingNumber,
-      pipelineStatus,
-      createdAt,
-    };
+      // Prepare the API request payload
+      const requestPayload = {
+        company_id: parseInt(companyId),
+        office_id: office_id,
+        sender_name: formData.senderName,
+        sender_phone: formData.senderPhone,
+        sender_town: formData.senderStage,
+        receiver_name: formData.receiverName,
+        receiver_phone: formData.receiverPhone,
+        receiver_town: formData.receiverStage,
+        parcel_description: formData.parcelDescription,
+        parcel_value: parseInt(formData.parcelValue),
+        special_instructions: formData.specialInstructions,
+        package_size: formData.packageSize as "small" | "medium" | "large",
+        payment_mode: formData.paymentMethod,
+        temp_id: temp_id,
+      };
 
-    // Save parcel data to localStorage keyed by temp_id
-    const storageKey = `registeredParcels_${temp_id}`;
-    const existingParcels = JSON.parse(localStorage.getItem(storageKey) || "[]");
-    existingParcels.push(parcelData);
-    localStorage.setItem(storageKey, JSON.stringify(existingParcels));
+      // Add unique request ID for debugging
+      const requestId = Date.now() + Math.random();
+      console.log('Submitting registration request:', requestId, requestPayload);
 
-    console.log("Form submitted:", parcelData);
+      // Call the register-package API
+      const response = await fetch('/api/register-package', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestPayload),
+      });
 
-    // Show success message with tracking number and initial status
-    alert(
-      `Mzigo Registered successfully!\n\n` +
-        `Tracking Number: ${trackingNumber}\n` +
-        `Initial Status: ${pipelineStatus.registered.label}\n` +
-        `Created: ${new Date(createdAt).toLocaleString()}`
-    );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to register package');
+      }
 
-    // Reset form
-    setFormData({
-      senderName: "",
-      senderPhone: "",
-      senderStage: "",
-      receiverName: "",
-      receiverPhone: "",
-      receiverStage: "",
-      parcelDescription: "",
-      parcelValue: "",
-      packageSize: "",
-      specialInstructions: "",
-      paymentMethod: requirements.payment_methods[0] ?? "",
-      company: companyName,
-    });
+      const result = await response.json();
+      console.log('Registration response:', requestId, result);
+
+      // Show success message with tracking number from API response
+      alert(
+        `Mzigo Registered successfully!\n\n` +
+          `Tracking Number: ${result.generated_code}\n` +
+          `Status: ${result.message}\n` +
+          `Date: ${result.s_date} ${result.s_time}\n` +
+          `ID: ${result.id}`
+      );
+
+      // Save the response data to localStorage for tracking
+      const storageKey = `registeredParcels_${temp_id}`;
+      const existingParcels = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      const parcelData = {
+        ...formData,
+        trackingNumber: result.generated_code,
+        id: result.id,
+        createdAt: `${result.s_date} ${result.s_time}`,
+        pipelineStatus: createInitialPipelineStatus(),
+      };
+      existingParcels.push(parcelData);
+      localStorage.setItem(storageKey, JSON.stringify(existingParcels));
+
+      // Reset form
+      setFormData({
+        senderName: "",
+        senderPhone: "",
+        senderStage: "",
+        receiverName: "",
+        receiverPhone: "",
+        receiverStage: "",
+        parcelDescription: "",
+        parcelValue: "",
+        packageSize: "",
+        specialInstructions: "",
+        paymentMethod: requirements.payment_methods[0] ?? "",
+        company: companyName,
+      });
+
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      setError(error.message || "Failed to register package. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   // Build regex patterns to enforce selection from suggestions
@@ -379,9 +425,10 @@ function SendMzigoPage() {
 
         <button
           type="submit"
-          className="w-full bg-[#2c3e50] text-white py-3 px-6 rounded-md hover:bg-blue-800 transition"
+          disabled={submitting || loadingReq}
+          className="w-full bg-[#2c3e50] text-white py-3 px-6 rounded-md hover:bg-blue-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          Register Mzigo
+          {submitting ? "Registering..." : "Register Mzigo"}
         </button>
       </form>
     </div>
