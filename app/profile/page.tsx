@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import LocationSelector from "@/components/LocationSelector";
 import CompanyCard from "@/components/CompanyCard";
 
@@ -33,13 +34,7 @@ const ProfilePage: React.FC = () => {
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editingPackage, setEditingPackage] = useState<Package | null>(null);
-  const [editForm, setEditForm] = useState({
-    sender_phone: '',
-    receiver_town: '',
-    parcel_value: 0,
-    special_instructions: ''
-  });
+  // Legacy inline edit state removed; redirects to register page for editing.
   const [destinations, setDestinations] = useState<{id: number | string; name: string}[]>([]);
   const [partnersMap, setPartnersMap] = useState<Record<string | number, string>>({});
   const [loadingPartners, setLoadingPartners] = useState(false);
@@ -137,96 +132,39 @@ const ProfilePage: React.FC = () => {
   };
 
   // Function to fetch destinations for a company
-  const fetchDestinations = async (companyId: number) => {
-    try {
-      const response = await fetch(`/api/requirements?company_id=${companyId}`, {
-        cache: "no-store"
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        const destinations = Array.isArray(data?.destinations) ? data.destinations : [];
-        setDestinations(destinations);
-      } else {
-        console.error('Failed to fetch destinations');
-        setDestinations([]);
-      }
-    } catch (error) {
-      console.error('Error fetching destinations:', error);
-      setDestinations([]);
-    }
+  const fetchDestinations = async (_companyId: number) => {
+    /* no-op for redirect edit flow */
   };
 
   // Function to handle edit package
+  const router = useRouter();
+  const slugify = (name: string) =>
+    name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
   const handleEditPackage = (pkg: Package) => {
-    console.log('Editing package:', pkg); // Debug log
-    setEditingPackage(pkg);
-    setEditForm({
-      sender_phone: pkg.sender_phone || '',
-      receiver_town: pkg.receiver_town || '',
-      parcel_value: Number(pkg.parcel_value) || 0,
-      special_instructions: pkg.special_instructions || ''
-    });
-    
-    // Fetch destinations for this company
-    if (pkg.company) {
-      fetchDestinations(pkg.company);
+    // Persist full package in sessionStorage so register page can pre-fill
+    try {
+      sessionStorage.setItem(
+        `editingPackage_${pkg.id}`,
+        JSON.stringify(pkg)
+      );
+    } catch (e) {
+      console.warn("Failed to store editing package", e);
     }
+    const companyName = getCompanyName(pkg.company);
+    const slug = slugify(companyName || "company");
+    router.push(`/send-mzigo/${slug}?company_id=${pkg.company}&edit=1&package_id=${pkg.id}`);
   };
 
   // Function to cancel edit
-  const handleCancelEdit = () => {
-    setEditingPackage(null);
-    setEditForm({
-      sender_phone: '',
-      receiver_town: '',
-      parcel_value: 0,
-      special_instructions: ''
-    });
-  };
+  const handleCancelEdit = () => {};
 
   // Function to update package
-  const handleUpdatePackage = async () => {
-    if (!editingPackage) return;
-
-    try {
-      const response = await fetch('/api/update-package', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          package_id: editingPackage.id,
-          sender_phone: editForm.sender_phone,
-          receiver_town: editForm.receiver_town,
-          parcel_value: editForm.parcel_value,
-          special_instructions: editForm.special_instructions
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (data.response === 1 || data.success) {
-        // Update the package in the state
-        setPackages(prev => prev.map(pkg => 
-          pkg.id === editingPackage.id 
-            ? { 
-                ...pkg, 
-                sender_phone: editForm.sender_phone,
-                receiver_town: editForm.receiver_town,
-                parcel_value: editForm.parcel_value,
-                special_instructions: editForm.special_instructions
-              }
-            : pkg
-        ));
-        alert('Package updated successfully');
-        handleCancelEdit();
-      } else {
-        alert(`Failed to update package: ${data.error || data.message || 'Unknown error'}`);
-      }
-    } catch (error) {
-      console.error('Update error:', error);
-      alert('Network error occurred while updating package');
-    }
-  };
+  const handleUpdatePackage = async () => {};
 
   useEffect(() => {
     const deviceId = getCookie("device_id") || "unknown_device";
@@ -235,17 +173,7 @@ const ProfilePage: React.FC = () => {
     fetchPartners();
   }, []);
 
-  // Update form when editing package changes
-  useEffect(() => {
-    if (editingPackage) {
-      setEditForm({
-        sender_phone: editingPackage.sender_phone || '',
-        receiver_town: editingPackage.receiver_town || '',
-        parcel_value: Number(editingPackage.parcel_value) || 0,
-        special_instructions: editingPackage.special_instructions || ''
-      });
-    }
-  }, [editingPackage]);
+  // (Editing now handled via redirect; no local edit form state.)
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 text-black">          
@@ -371,101 +299,7 @@ const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* Edit Package Modal */}
-      {editingPackage && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-gray-400">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Edit Package #{editingPackage.id}</h2>
-                <button
-                  onClick={handleCancelEdit}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Sender Phone
-                  </label>
-                  <input
-                    type="text"
-                    value={editForm.sender_phone}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, sender_phone: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter sender phone number"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Receiver Town/Destination
-                  </label>
-                  <LocationSelector
-                    value={editForm.receiver_town}
-                    onChange={(val) => setEditForm(prev => ({ ...prev, receiver_town: val }))}
-                    options={destinations.map(d => d.name)}
-                    placeholder={destinations.length ? "Type to search destinations" : "No destinations available"}
-                    disabled={destinations.length === 0}
-                    required
-                    panel
-                  />
-                  {destinations.length > 0 && (
-                    <p className="text-xs text-gray-500 mt-1">Choose an available destination (must match list)</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Parcel Value (KES)
-                  </label>
-                  <input
-                    type="number"
-                    value={editForm.parcel_value}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, parcel_value: Number(e.target.value) }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter parcel value"
-                    min="0"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Special Instructions
-                  </label>
-                  <textarea
-                    value={editForm.special_instructions}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, special_instructions: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter special instructions"
-                    rows={3}
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={handleUpdatePackage}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-                >
-                  Update Package
-                </button>
-                <button
-                  onClick={handleCancelEdit}
-                  className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal removed; edit now redirects to register form */}
     </div>
   );
 };

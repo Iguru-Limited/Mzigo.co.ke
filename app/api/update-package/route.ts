@@ -6,10 +6,21 @@ export const dynamic = "force-dynamic";
 
 interface UpdatePackageRequest {
   package_id: number;
+  // Original limited fields
   sender_phone?: string;
   receiver_town?: string;
   parcel_value?: number;
   special_instructions?: string;
+  // Extended editable fields (align with registration)
+  sender_name?: string;
+  sender_town?: string;
+  receiver_name?: string;
+  receiver_phone?: string;
+  parcel_description?: string;
+  package_size?: "small" | "medium" | "large" | string;
+  payment_mode?: string;
+  office_id?: number;
+  company_id?: number; // optional, in case upstream needs it
 }
 
 interface UpdatePackageResponse {
@@ -51,37 +62,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate optional fields if provided
-    if (body.sender_phone && typeof body.sender_phone !== 'string') {
-      return NextResponse.json(
-        { error: "sender_phone must be a string" },
-        { status: 400 }
-      );
-    }
+    // Helper validator
+    const isString = (v: any) => typeof v === 'string';
+    const isNumber = (v: any) => typeof v === 'number' && !isNaN(v);
 
-    if (body.receiver_town && typeof body.receiver_town !== 'string') {
-      return NextResponse.json(
-        { error: "receiver_town must be a string" },
-        { status: 400 }
-      );
-    }
+    const fieldValidators: Record<string, (v: any) => boolean> = {
+      sender_phone: isString,
+      receiver_town: isString,
+      special_instructions: isString,
+      sender_name: isString,
+      sender_town: isString,
+      receiver_name: isString,
+      receiver_phone: isString,
+      parcel_description: isString,
+      package_size: isString,
+      payment_mode: isString,
+      parcel_value: isNumber,
+      office_id: isNumber,
+      company_id: isNumber,
+    };
 
-    if (body.parcel_value !== undefined && typeof body.parcel_value !== 'number') {
-      return NextResponse.json(
-        { error: "parcel_value must be a number" },
-        { status: 400 }
-      );
-    }
-
-    if (body.special_instructions && typeof body.special_instructions !== 'string') {
-      return NextResponse.json(
-        { error: "special_instructions must be a string" },
-        { status: 400 }
-      );
+    for (const [k, validator] of Object.entries(fieldValidators)) {
+      if (body[k] !== undefined && !validator(body[k])) {
+        return NextResponse.json(
+          { error: `${k} has invalid type` },
+          { status: 400 }
+        );
+      }
     }
 
     // Check if at least one field to update is provided
-    const updateFields = ['sender_phone', 'receiver_town', 'parcel_value', 'special_instructions'];
+    const updateFields = Object.keys(fieldValidators);
     const hasUpdateFields = updateFields.some(field => body[field] !== undefined);
     
     if (!hasUpdateFields) {
@@ -91,7 +102,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await updatePackage(body);
+  const result = await updatePackage(body as UpdatePackageRequest);
     return NextResponse.json(result);
     
   } catch (error: any) {
