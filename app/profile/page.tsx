@@ -83,6 +83,7 @@ const ProfilePage: React.FC = () => {
     parcel_value: 0,
     special_instructions: ''
   });
+  const [destinations, setDestinations] = useState<{id: number | string; name: string}[]>([]);
 
   // Utility to get cookie by name
   const getCookie = (name: string): string | null => {
@@ -156,6 +157,27 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  // Function to fetch destinations for a company
+  const fetchDestinations = async (companyId: number) => {
+    try {
+      const response = await fetch(`/api/requirements?company_id=${companyId}`, {
+        cache: "no-store"
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const destinations = Array.isArray(data?.destinations) ? data.destinations : [];
+        setDestinations(destinations);
+      } else {
+        console.error('Failed to fetch destinations');
+        setDestinations([]);
+      }
+    } catch (error) {
+      console.error('Error fetching destinations:', error);
+      setDestinations([]);
+    }
+  };
+
   // Function to handle edit package
   const handleEditPackage = (pkg: Package) => {
     console.log('Editing package:', pkg); // Debug log
@@ -166,6 +188,11 @@ const ProfilePage: React.FC = () => {
       parcel_value: Number(pkg.parcel_value) || 0,
       special_instructions: pkg.special_instructions || ''
     });
+    
+    // Fetch destinations for this company
+    if (pkg.company) {
+      fetchDestinations(pkg.company);
+    }
   };
 
   // Function to cancel edit
@@ -366,8 +393,8 @@ const ProfilePage: React.FC = () => {
 
       {/* Edit Package Modal */}
       {editingPackage && (
-        <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto shadow-xl">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-gray-400">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Edit Package #{editingPackage.id}</h2>
@@ -397,15 +424,26 @@ const ProfilePage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Receiver Town
+                    Receiver Town/Destination
                   </label>
                   <input
                     type="text"
+                    list="receiverTownOptions"
                     value={editForm.receiver_town}
                     onChange={(e) => setEditForm(prev => ({ ...prev, receiver_town: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter receiver town"
+                    placeholder="Enter or select receiver town/destination"
                   />
+                  <datalist id="receiverTownOptions">
+                    {destinations.map((destination) => (
+                      <option key={destination.id} value={destination.name} />
+                    ))}
+                  </datalist>
+                  {destinations.length > 0 && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Start typing to see available destinations for this company
+                    </p>
+                  )}
                 </div>
 
                 <div>
