@@ -9,7 +9,7 @@ import {
   canAdvanceToStep,
   advanceToNextStep,
   setPipelineToStep 
-} from '../utils/pipelineManager';
+} from '@/lib/pipelineManager';
 
 interface StatusUpdaterProps {
   pipelineStatus: PipelineStatus;

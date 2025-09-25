@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import CompanyCard from "../components/CompanyCard";
+import CompanyCard from "@/components/CompanyCard";
 
 interface Parcel {
   senderName: string;

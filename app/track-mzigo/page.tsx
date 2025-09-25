@@ -1,14 +1,14 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import SearchBar from '../components/SearchBar'
-import TrackingPipeline from '../components/TrackingPipeline'
-import StatusUpdater from '../components/StatusUpdater'
+import SearchBar from '@/components/SearchBar'
+import TrackingPipeline from '@/components/TrackingPipeline'
+import StatusUpdater from '@/components/StatusUpdater'
 import { 
   PipelineStatus, 
   convertLegacyStatus, 
   getCurrentStatusString,
   createInitialPipelineStatus 
-} from '../utils/pipelineManager'
+} from '@/lib/pipelineManager'
 
 interface Parcel {
   senderName: string;

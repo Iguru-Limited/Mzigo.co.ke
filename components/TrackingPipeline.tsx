@@ -1,5 +1,5 @@
 import React from 'react';
-import { PipelineStatus, PipelineStep, getCurrentStep, getCompletedSteps, getPipelineProgress } from '../utils/pipelineManager';
+import { PipelineStatus, PipelineStep, getCurrentStep, getCompletedSteps, getPipelineProgress } from '@/lib/pipelineManager';
 
 interface TrackingPipelineProps {
   pipelineStatus: PipelineStatus;
