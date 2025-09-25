@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { createInitialPipelineStatus, type PipelineStatus } from "../../utils/pipelineManager";
+import { createInitialPipelineStatus, type PipelineStatus } from "@/lib/pipelineManager";
 
 // Page-level dynamic params are accessed via useParams in client components
 

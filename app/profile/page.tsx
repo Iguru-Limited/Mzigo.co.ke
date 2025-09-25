@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import CompanyCard from "../components/CompanyCard";
+import CompanyCard from "@/components/CompanyCard";
 
 interface Parcel {
   senderName: string;
@@ -64,8 +64,6 @@ const companies = [
 
 const ProfilePage: React.FC = () => {
   const [parcels, setParcels] = useState<Parcel[]>([]);
-  const [usedCompanies, setUsedCompanies] = useState<typeof companies>([]);
-
   // Utility to get cookie by name
   const getCookie = (name: string): string | null => {
     if (typeof document === "undefined") return null;
@@ -83,10 +81,7 @@ const ProfilePage: React.FC = () => {
       try {
         const parsedParcels = JSON.parse(storedParcels);
         setParcels(parsedParcels);
-        // Get unique companies used
-        const companyNames = [...new Set(parsedParcels.map((p: Parcel) => p.company))];
-        const used = companies.filter(c => companyNames.includes(c.name));
-        setUsedCompanies(used);
+        
       } catch (error) {
         console.error("Error parsing parcels from localStorage:", error);
       }
@@ -94,23 +89,7 @@ const ProfilePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 text-black">
-      
-      {usedCompanies.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Recently Used Companies</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {usedCompanies.map((company) => (
-              <CompanyCard
-                key={company.id}
-                companyName={company.name}
-                imageSrc={company.image}
-                description={company.description}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+    <div className="max-w-4xl mx-auto px-4 py-8 text-black">          
        <h1 className="text-3xl font-bold text-center mb-8">
         Your Registered Parcels
       </h1>

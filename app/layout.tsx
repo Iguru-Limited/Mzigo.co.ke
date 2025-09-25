@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "./components/Header";
+import Header from "@/components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +14,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mzigo",
+  title: {
+    default: "Mzigo",
+    template: "%s | Mzigo"
+  },
+  description: "Mzigo - Your trusted package delivery and tracking solution",
+  keywords: ["package delivery", "tracking", "logistics", "shipping"],
+  authors: [{ name: "Mzigo Team" }],
+  creator: "Mzigo",
+  publisher: "Mzigo",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 };
 
 export default function RootLayout({
