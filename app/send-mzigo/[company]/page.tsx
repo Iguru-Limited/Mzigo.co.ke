@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import LocationSelector from "@/components/LocationSelector";
-import { ArrowUpDown } from "lucide-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { createInitialPipelineStatus, type PipelineStatus } from "@/lib/pipelineManager";
 
@@ -104,11 +103,10 @@ function SendMzigoPage() {
           : [];
         if (!abort) {
           setRequirements({ offices, destinations, payment_methods });
-          // Set defaults (only if still empty to not override user typing during reload)
+          // Only set payment method default; keep sender & receiver empty so user must choose.
           setFormData((prev) => ({
             ...prev,
             paymentMethod: prev.paymentMethod || payment_methods[0] || "",
-            senderStage: prev.senderStage || offices[0]?.name || "",
           }));
         }
       } catch (e: any) {
@@ -271,11 +269,9 @@ function SendMzigoPage() {
             <div className="md:col-span-2 relative">
               <LocationSelector
                 label=""
-                placeholder="From (Sender Office/Stage)"
+                placeholder="From"
                 value={formData.senderStage}
-                onChange={(val) =>
-                  setFormData((p) => ({ ...p, senderStage: val }))
-                }
+                onChange={(val) => setFormData((p) => ({ ...p, senderStage: val }))}
                 options={requirements.offices.map((o) => o.name)}
                 disabled={loadingReq}
                 required
@@ -309,23 +305,8 @@ function SendMzigoPage() {
             />
 
             <div className="md:col-span-2 relative">
-              {/* Swap button */}
-              <button
-                type="button"
-                className="absolute right-2 -top-4 bg-pink-600 text-white p-2 rounded-md shadow hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
-                onClick={() =>
-                  setFormData((p) => ({
-                    ...p,
-                    senderStage: p.receiverStage,
-                    receiverStage: p.senderStage,
-                  }))
-                }
-                aria-label="Swap sender & receiver locations"
-              >
-                <ArrowUpDown className="w-4 h-4" />
-              </button>
               <LocationSelector
-                placeholder="To (Receiver Destination/Stage)"
+                placeholder="To"
                 value={formData.receiverStage}
                 onChange={(val) =>
                   setFormData((p) => ({ ...p, receiverStage: val }))
