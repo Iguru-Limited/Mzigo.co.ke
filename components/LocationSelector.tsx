@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState, useId } from "react";
 import { MapPin, X } from "lucide-react";
 
 export interface LocationSelectorProps {
@@ -42,7 +42,9 @@ export const LocationSelector: React.FC<LocationSelectorProps> = ({
   const [query, setQuery] = useState(value);
   const [highlight, setHighlight] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const listId = useRef("locsel-" + Math.random().toString(36).slice(2));
+  // Stable id using React 18 useId (avoids SSR hydration mismatches vs Math.random)
+  const reactId = useId();
+  const listId = useRef(`locsel-${reactId}`);
 
   // Keep local query in sync when parent value externally changes (e.g. swap)
   useEffect(() => {
