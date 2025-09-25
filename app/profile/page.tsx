@@ -27,50 +27,6 @@ interface Package {
   [key: string]: any;
 }
 
-const companies = [
-  {
-    id: 1,
-    name: "Lopha Travelers Ltd",
-    image: "/lopha-travel-ltd.jpg",
-    stages: ["Nairobi", "Ruiru", "Thika"],
-    description: "Reliable transport services across key routes.",
-  },
-  {
-    id: 2,
-    name: "Kasese",
-    image: "/kasese logo.jpeg",
-    stages: ["Nairobi", "Naivasha"],
-    description: "Efficient delivery in the Kasese region.",
-  },
-  {
-    id: 3,
-    name: "Chania",
-    image: "/Chania logo.jpeg",
-    stages: ["Nairobi", "Emali", "Mombasa"],
-    description: "Fast and secure parcel delivery to coastal areas.",
-  },
-  {
-    id: 4,
-    name: "Kangema",
-    image: "/Kangema.jpeg",
-    stages: ["Nairobi", "Kangema", "Murang'a"],
-    description: "Trusted transport for Murang'a and surrounding areas.",
-  },
-  {
-    id: 5,
-    name: "Ungwana",
-    image: "/ungwana logo.jpeg",
-    stages: ["Nairobi", "Embu", "Meru"],
-    description: "Comprehensive logistics for Embu and Meru routes.",
-  },
-  {
-    id: 6,
-    name: "Metro Trans",
-    image: "/metro trans.jpeg",
-    stages: ["Nairobi", "Junction-mall", "Ngong-road", "Ngong"],
-    description: "Urban and suburban transport solutions.",
-  },
-];
 
 const ProfilePage: React.FC = () => {
   const [packages, setPackages] = useState<Package[]>([]);
@@ -84,6 +40,8 @@ const ProfilePage: React.FC = () => {
     special_instructions: ''
   });
   const [destinations, setDestinations] = useState<{id: number | string; name: string}[]>([]);
+  const [partnersMap, setPartnersMap] = useState<Record<string | number, string>>({});
+  const [loadingPartners, setLoadingPartners] = useState(false);
 
   // Utility to get cookie by name
   const getCookie = (name: string): string | null => {
@@ -94,10 +52,30 @@ const ProfilePage: React.FC = () => {
     return null;
   };
 
-  // Function to get company name by ID
+  // Function to get company name by ID (dynamic only)
   const getCompanyName = (companyId: number | string): string => {
-    const company = companies.find(c => c.id === Number(companyId));
-    return company ? company.name : 'Unknown Company';
+    if (!companyId && companyId !== 0) return 'Unknown Company';
+    return partnersMap[companyId] || 'Unknown Company';
+  };
+
+  // Fetch partners (companies) once to build an id->name map
+  const fetchPartners = async () => {
+    try {
+      setLoadingPartners(true);
+      const res = await fetch('/api/partners', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load partners');
+      const json = await res.json();
+      const list: Array<{ id: number | string; name: string }> = Array.isArray(json?.partners) ? json.partners : [];
+      if (list.length) {
+        const map: Record<string | number, string> = {};
+        list.forEach(p => { if (p.id != null && p.name) map[p.id] = p.name; });
+        setPartnersMap(map);
+      }
+    } catch (e) {
+  console.warn('Partners fetch failed:', (e as any)?.message);
+    } finally {
+      setLoadingPartners(false);
+    }
   };
 
   // Function to fetch packages from API
@@ -253,6 +231,7 @@ const ProfilePage: React.FC = () => {
     const deviceId = getCookie("device_id") || "unknown_device";
     // Use device_id as temp_id to fetch packages
     fetchPackages(deviceId);
+    fetchPartners();
   }, []);
 
   // Update form when editing package changes
