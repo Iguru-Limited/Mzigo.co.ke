@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import LocationSelector from "@/components/LocationSelector";
 import CompanyCard from "@/components/CompanyCard";
 
 interface Package {
@@ -405,23 +406,17 @@ const ProfilePage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Receiver Town/Destination
                   </label>
-                  <input
-                    type="text"
-                    list="receiverTownOptions"
+                  <LocationSelector
                     value={editForm.receiver_town}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, receiver_town: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter or select receiver town/destination"
+                    onChange={(val) => setEditForm(prev => ({ ...prev, receiver_town: val }))}
+                    options={destinations.map(d => d.name)}
+                    placeholder={destinations.length ? "Type to search destinations" : "No destinations available"}
+                    disabled={destinations.length === 0}
+                    required
+                    panel
                   />
-                  <datalist id="receiverTownOptions">
-                    {destinations.map((destination) => (
-                      <option key={destination.id} value={destination.name} />
-                    ))}
-                  </datalist>
                   {destinations.length > 0 && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      Start typing to see available destinations for this company
-                    </p>
+                    <p className="text-xs text-gray-500 mt-1">Choose an available destination (must match list)</p>
                   )}
                 </div>
 
