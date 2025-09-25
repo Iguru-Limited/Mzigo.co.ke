@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import LocationSelector from "@/components/LocationSelector";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { createInitialPipelineStatus, type PipelineStatus } from "@/lib/pipelineManager";
 
 // Page-level dynamic params are accessed via useParams in client components
@@ -38,7 +38,10 @@ function SendMzigoPage() {
     .replace(/-/g, " ")
     .replace(/\b\w/g, (l) => l.toUpperCase());
   const searchParams = useSearchParams();
+  const router = useRouter();
   const companyId = searchParams.get("company_id") || "1";
+  const isEdit = searchParams.get("edit") === "1";
+  const editingPackageId = searchParams.get("package_id");
 
   const [requirements, setRequirements] = useState<{
     offices: Office[];
@@ -63,6 +66,8 @@ function SendMzigoPage() {
     paymentMethod: "",
     company: companyName,
   });
+  const [originalData, setOriginalData] = useState<typeof formData | null>(null);
+  const [missingEditSource, setMissingEditSource] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -125,6 +130,42 @@ function SendMzigoPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
+  // Load existing package data for edit mode from sessionStorage
+  useEffect(() => {
+    if (!isEdit || !editingPackageId) return;
+    const key = `editingPackage_${editingPackageId}`;
+    try {
+      const stored = sessionStorage.getItem(key);
+      if (!stored) {
+        setMissingEditSource(true);
+        setTimeout(() => router.push('/profile'), 2500);
+        return;
+      }
+      const pkg = JSON.parse(stored);
+      const mapped = {
+        senderName: pkg.sender_name || "",
+        senderPhone: pkg.sender_phone || "",
+        senderStage: pkg.sender_town || "",
+        receiverName: pkg.receiver_name || "",
+        receiverPhone: pkg.receiver_phone || "",
+        receiverStage: pkg.receiver_town || "",
+        parcelDescription: pkg.parcel_description || "",
+        parcelValue: String(pkg.parcel_value ?? ""),
+        packageSize: pkg.package_size || "",
+        specialInstructions: pkg.special_instructions || "",
+        paymentMethod: pkg.payment_mode || "",
+        company: companyName,
+      };
+      setFormData(mapped);
+      setOriginalData(mapped);
+    } catch (e) {
+      console.error("Failed to load editing package", e);
+      setMissingEditSource(true);
+      setTimeout(() => router.push('/profile'), 2500);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEdit, editingPackageId]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -137,36 +178,76 @@ function SendMzigoPage() {
     setError(null);
 
     try {
-      const temp_id = getCookie("device_id") || "unknown_device";
+  const temp_id = getCookie("device_id") || "unknown_device";
       
       // Get the office_id from the selected office
       const selectedOffice = requirements.offices.find(office => office.name === formData.senderStage);
       const office_id = selectedOffice?.id || 1;
 
-      // Prepare the API request payload
-      const requestPayload = {
-        company_id: parseInt(companyId),
-        office_id: office_id,
-        sender_name: formData.senderName,
-        sender_phone: formData.senderPhone,
-        sender_town: formData.senderStage,
-        receiver_name: formData.receiverName,
-        receiver_phone: formData.receiverPhone,
-        receiver_town: formData.receiverStage,
-        parcel_description: formData.parcelDescription,
-        parcel_value: parseInt(formData.parcelValue),
-        special_instructions: formData.specialInstructions,
-        package_size: formData.packageSize as "small" | "medium" | "large",
-        payment_mode: formData.paymentMethod,
-        temp_id: temp_id,
-      };
+      let apiUrl = '/api/register-package';
+      let methodDescription = 'register';
+      let requestPayload: any;
+
+      if (isEdit && originalData) {
+        const diff: any = { package_id: Number(editingPackageId) };
+        const map: Array<[keyof typeof formData, string, string]> = [
+          ['senderName','sender_name',''],
+          ['senderPhone','sender_phone',''],
+          ['senderStage','sender_town',''],
+          ['receiverName','receiver_name',''],
+          ['receiverPhone','receiver_phone',''],
+          ['receiverStage','receiver_town',''],
+          ['parcelDescription','parcel_description',''],
+          ['parcelValue','parcel_value','number'],
+          ['packageSize','package_size',''],
+          ['specialInstructions','special_instructions',''],
+          ['paymentMethod','payment_mode',''],
+        ];
+        map.forEach(([localKey, apiKey, type]) => {
+          const newVal = (formData as any)[localKey];
+          const oldVal = (originalData as any)[localKey];
+            if (newVal !== oldVal) {
+            diff[apiKey] = type === 'number' ? parseInt(newVal || '0') : newVal;
+          }
+        });
+        if (formData.senderStage !== originalData.senderStage) {
+          diff.office_id = office_id;
+          diff.company_id = parseInt(companyId);
+        }
+        if (Object.keys(diff).length === 1) {
+          alert('No changes to update.');
+          setSubmitting(false);
+          return;
+        }
+        apiUrl = '/api/update-package';
+        methodDescription = 'update';
+        requestPayload = diff;
+      } else {
+        // Prepare the API request payload for new registration
+        requestPayload = {
+          company_id: parseInt(companyId),
+          office_id: office_id,
+          sender_name: formData.senderName,
+          sender_phone: formData.senderPhone,
+          sender_town: formData.senderStage,
+          receiver_name: formData.receiverName,
+          receiver_phone: formData.receiverPhone,
+          receiver_town: formData.receiverStage,
+          parcel_description: formData.parcelDescription,
+          parcel_value: parseInt(formData.parcelValue),
+          special_instructions: formData.specialInstructions,
+          package_size: formData.packageSize as "small" | "medium" | "large",
+          payment_mode: formData.paymentMethod,
+          temp_id: temp_id,
+        };
+      }
 
       // Add unique request ID for debugging
       const requestId = Date.now() + Math.random();
       console.log('Submitting registration request:', requestId, requestPayload);
 
       // Call the register-package API
-      const response = await fetch('/api/register-package', {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -180,16 +261,22 @@ function SendMzigoPage() {
       }
 
       const result = await response.json();
-      console.log('Registration response:', requestId, result);
+  console.log(methodDescription + ' response:', requestId, result);
 
       // Show success message with tracking number from API response
-      alert(
-        `Mzigo Registered successfully!\n\n` +
-          `Tracking Number: ${result.generated_code}\n` +
-          `Status: ${result.message}\n` +
-          `Date: ${result.s_date} ${result.s_time}\n` +
-          `ID: ${result.id}`
-      );
+      if (isEdit) {
+        try { sessionStorage.removeItem(`editingPackage_${editingPackageId}`); } catch {}
+        alert('Package updated successfully');
+        router.push('/profile');
+        return;
+      } else {
+        alert(
+          `Mzigo Registered successfully!\n\n` +
+            `Tracking Number: ${result.generated_code}\n` +
+            `Status: ${result.message}\n` +
+            `Date: ${result.s_date} ${result.s_time}\n` 
+        );
+      }
 
       // Save the response data to localStorage for tracking
       const storageKey = `registeredParcels_${temp_id}`;
@@ -205,7 +292,8 @@ function SendMzigoPage() {
       localStorage.setItem(storageKey, JSON.stringify(existingParcels));
 
       // Reset form
-      setFormData({
+      if (!isEdit) {
+        setFormData({
         senderName: "",
         senderPhone: "",
         senderStage: "",
@@ -218,7 +306,8 @@ function SendMzigoPage() {
         specialInstructions: "",
         paymentMethod: requirements.payment_methods[0] ?? "",
         company: companyName,
-      });
+        });
+      }
 
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -232,9 +321,18 @@ function SendMzigoPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 text-black">
-      <h1 className="text-3xl font-bold text-center mb-8 text-black">
-        Send with {companyName}
+      <h1 className="text-3xl font-bold text-center mb-4 text-black">
+        {isEdit ? `Edit Mzigo (${companyName})` : `Send with ${companyName}`}
       </h1>
+      {isEdit && (
+        <div className={`mb-6 px-4 py-3 rounded border text-sm ${missingEditSource ? 'border-red-300 bg-red-50 text-red-700' : 'border-pink-300 bg-pink-50 text-pink-700'}`}>
+          {missingEditSource ? (
+            <span>Original package data not found. Redirecting back to profile…</span>
+          ) : (
+            <span>Editing Mzigo.</span>
+          )}
+        </div>
+      )}
 
       {error && (
         <div className="mb-4 p-3 rounded bg-red-50 text-red-700 border border-red-200">
@@ -391,9 +489,9 @@ function SendMzigoPage() {
         <button
           type="submit"
           disabled={submitting || loadingReq}
-          className="w-full bg-[#2c3e50] text-white py-3 px-6 rounded-md hover:bg-blue-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full bg-green-400 text-white py-3 px-6 rounded-md hover:bg-green-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {submitting ? "Registering..." : "Register Mzigo"}
+          {submitting ? (isEdit ? "Updating..." : "Registering...") : (isEdit ? "Edit Mzigo" : "Register Mzigo")}
         </button>
       </form>
     </div>
