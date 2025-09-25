@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
+import LocationSelector from "@/components/LocationSelector";
+import { ArrowUpDown } from "lucide-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { createInitialPipelineStatus, type PipelineStatus } from "@/lib/pipelineManager";
 
@@ -33,10 +35,9 @@ function SendMzigoPage() {
     ? routeParams.company[0]
     : routeParams?.company || "";
   const company = companyParam;
-  const companyName = useMemo(
-    () => company.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-    [company]
-  );
+  const companyName = company
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (l) => l.toUpperCase());
   const searchParams = useSearchParams();
   const companyId = searchParams.get("company_id") || "1";
 
@@ -50,20 +51,16 @@ function SendMzigoPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    // Sender Details
     senderName: "",
     senderPhone: "",
     senderStage: "",
-    // Receiver Details
     receiverName: "",
     receiverPhone: "",
     receiverStage: "",
-    // Parcel Details
     parcelDescription: "",
     parcelValue: "",
     packageSize: "",
     specialInstructions: "",
-    // Payment Details
     paymentMethod: "",
     company: companyName,
   });
@@ -107,10 +104,12 @@ function SendMzigoPage() {
           : [];
         if (!abort) {
           setRequirements({ offices, destinations, payment_methods });
-          // Set default payment method if empty
-          if (!formData.paymentMethod && payment_methods.length > 0) {
-            setFormData((prev) => ({ ...prev, paymentMethod: payment_methods[0] }));
-          }
+          // Set defaults (only if still empty to not override user typing during reload)
+          setFormData((prev) => ({
+            ...prev,
+            paymentMethod: prev.paymentMethod || payment_methods[0] || "",
+            senderStage: prev.senderStage || offices[0]?.name || "",
+          }));
         }
       } catch (e: any) {
         if (!abort) {
@@ -231,23 +230,7 @@ function SendMzigoPage() {
     }
   };
 
-  // Build regex patterns to enforce selection from suggestions
-  const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const makePattern = (values: string[]) =>
-    values.length ? `^(?:${values.map((v) => escapeRegex(v)).join("|")})$` : undefined;
-
-  const officePattern = useMemo(
-    () => makePattern(requirements.offices.map((o) => o.name)),
-    [requirements.offices]
-  );
-  const destinationPattern = useMemo(
-    () => makePattern(requirements.destinations.map((d) => d.name)),
-    [requirements.destinations]
-  );
-  const paymentPattern = useMemo(
-    () => makePattern(requirements.payment_methods),
-    [requirements.payment_methods]
-  );
+  // Patterns removed – custom autocomplete enforces selection; payment now a select.
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 text-black">
@@ -285,24 +268,20 @@ function SendMzigoPage() {
               required
             />
 
-            <input
-              type="text"
-              name="senderStage"
-              list="senderStageOptions"
-              placeholder="Sender Office/Stage"
-              value={formData.senderStage}
-              onChange={handleChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
-              required
-              disabled={loadingReq}
-              pattern={officePattern}
-              title="Please select a value from the suggestions"
-            />
-            <datalist id="senderStageOptions">
-              {requirements.offices.map((o) => (
-                <option key={o.id} value={o.name} />
-              ))}
-            </datalist>
+            <div className="md:col-span-2 relative">
+              <LocationSelector
+                label=""
+                placeholder="From (Sender Office/Stage)"
+                value={formData.senderStage}
+                onChange={(val) =>
+                  setFormData((p) => ({ ...p, senderStage: val }))
+                }
+                options={requirements.offices.map((o) => o.name)}
+                disabled={loadingReq}
+                required
+                panel
+              />
+            </div>
           </div>
         </div>
 
@@ -329,24 +308,34 @@ function SendMzigoPage() {
               required
             />
 
-            <input
-              type="text"
-              name="receiverStage"
-              list="receiverStageOptions"
-              placeholder="Receiver Destination/Stage"
-              value={formData.receiverStage}
-              onChange={handleChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 md:col-span-2 text-black"
-              required
-              disabled={loadingReq}
-              pattern={destinationPattern}
-              title="Please select a value from the suggestions"
-            />
-            <datalist id="receiverStageOptions">
-              {requirements.destinations.map((d) => (
-                <option key={d.id} value={d.name} />
-              ))}
-            </datalist>
+            <div className="md:col-span-2 relative">
+              {/* Swap button */}
+              <button
+                type="button"
+                className="absolute right-2 -top-4 bg-pink-600 text-white p-2 rounded-md shadow hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                onClick={() =>
+                  setFormData((p) => ({
+                    ...p,
+                    senderStage: p.receiverStage,
+                    receiverStage: p.senderStage,
+                  }))
+                }
+                aria-label="Swap sender & receiver locations"
+              >
+                <ArrowUpDown className="w-4 h-4" />
+              </button>
+              <LocationSelector
+                placeholder="To (Receiver Destination/Stage)"
+                value={formData.receiverStage}
+                onChange={(val) =>
+                  setFormData((p) => ({ ...p, receiverStage: val }))
+                }
+                options={requirements.destinations.map((d) => d.name)}
+                disabled={loadingReq}
+                required
+                panel
+              />
+            </div>
           </div>
         </div>
 
@@ -402,24 +391,19 @@ function SendMzigoPage() {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4 text-black">Payment Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
+            <select
               name="paymentMethod"
-              list="paymentMethodOptions"
-              placeholder="Payment Method"
               value={formData.paymentMethod}
               onChange={handleChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
-              required
               disabled={loadingReq}
-              pattern={paymentPattern}
-              title="Please select a value from the suggestions"
-            />
-            <datalist id="paymentMethodOptions">
+              required
+              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
+            >
+              <option value="">Select Payment Method</option>
               {requirements.payment_methods.map((m, idx) => (
-                <option key={idx} value={m} />
+                <option key={idx} value={m}>{m}</option>
               ))}
-            </datalist>
+            </select>
           </div>
         </div>
 
