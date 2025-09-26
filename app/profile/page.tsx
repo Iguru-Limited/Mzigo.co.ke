@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import LocationSelector from "@/components/LocationSelector";
 import CompanyCard from "@/components/CompanyCard";
 import { useToast } from "@/components/ToastProvider";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Package {
   id: number;
@@ -36,6 +37,9 @@ const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
   // Legacy inline edit state removed; redirects to register page for editing.
   const [destinations, setDestinations] = useState<{id: number | string; name: string}[]>([]);
   const [partnersMap, setPartnersMap] = useState<Record<string | number, string>>({});
@@ -105,31 +109,35 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  // Function to delete a package
-  const handleDeletePackage = async (packageId: number) => {
-    if (!confirm('Are you sure you want to delete this package? This action cannot be undone.')) {
-      return;
-    }
+  // Function to delete a package (opens confirm dialog)
+  const handleDeletePackage = (packageId: number) => {
+    setDeletingId(packageId);
+    setConfirmOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    if (deletingId == null) return;
+    setDeleting(true);
     try {
       const response = await fetch('/api/delete-package', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ package_id: packageId })
+        body: JSON.stringify({ package_id: deletingId })
       });
-      
       const data = await response.json();
-      
       if (data.success) {
-        // Remove the deleted package from the state
-        setPackages(prev => prev.filter(pkg => pkg.id !== packageId));
+        setPackages(prev => prev.filter(pkg => pkg.id !== deletingId));
         toast.success('Package deleted successfully');
+        setConfirmOpen(false);
+        setDeletingId(null);
       } else {
         toast.error(`Failed to delete package: ${data.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Delete error:', error);
       toast.error('Network error occurred while deleting package');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -300,6 +308,17 @@ const ProfilePage: React.FC = () => {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete package?"
+        description="This action cannot be undone. The package will be permanently deleted."
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={deleting}
+        onCancel={() => { if (!deleting) setConfirmOpen(false); }}
+        onConfirm={confirmDelete}
+      />
 
       {/* Modal removed; edit now redirects to register form */}
     </div>
