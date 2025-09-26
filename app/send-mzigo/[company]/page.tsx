@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import LocationSelector from "@/components/LocationSelector";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { createInitialPipelineStatus, type PipelineStatus } from "@/lib/pipelineManager";
+import { useToast } from "@/components/ToastProvider";
 
 // Page-level dynamic params are accessed via useParams in client components
 
@@ -42,6 +43,7 @@ function SendMzigoPage() {
   const companyId = searchParams.get("company_id") || "1";
   const isEdit = searchParams.get("edit") === "1";
   const editingPackageId = searchParams.get("package_id");
+  const toast = useToast();
 
   const [requirements, setRequirements] = useState<{
     offices: Office[];
@@ -223,7 +225,7 @@ function SendMzigoPage() {
           diff.company_id = parseInt(companyId);
         }
         if (Object.keys(diff).length === 1) {
-          alert('No changes to update.');
+          toast.info('No changes to update.');
           setSubmitting(false);
           return;
         }
@@ -274,15 +276,12 @@ function SendMzigoPage() {
       // Show success message with tracking number from API response
       if (isEdit) {
         try { sessionStorage.removeItem(`editingPackage_${editingPackageId}`); } catch {}
-        alert('Package updated successfully');
+        toast.success('Package updated successfully');
         router.push('/profile');
         return;
       } else {
-        alert(
-          `Mzigo Registered successfully!\n\n` +
-            `Tracking Number: ${result.generated_code}\n` +
-            `Status: ${result.message}\n` +
-            `Date: ${result.s_date} ${result.s_time}\n` 
+        toast.success(
+          `Mzigo registered successfully. Tracking: ${result.generated_code} — ${result.message} (${result.s_date} ${result.s_time})`
         );
       }
 
@@ -320,6 +319,7 @@ function SendMzigoPage() {
     } catch (error: any) {
       console.error("Registration error:", error);
       setError(error.message || "Failed to register package. Please try again.");
+      toast.error(error.message || "Failed to register package. Please try again.");
     } finally {
       setSubmitting(false);
     }

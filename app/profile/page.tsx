@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LocationSelector from "@/components/LocationSelector";
 import CompanyCard from "@/components/CompanyCard";
+import { useToast } from "@/components/ToastProvider";
 
 interface Package {
   id: number;
@@ -34,6 +35,7 @@ const ProfilePage: React.FC = () => {
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
   // Legacy inline edit state removed; redirects to register page for editing.
   const [destinations, setDestinations] = useState<{id: number | string; name: string}[]>([]);
   const [partnersMap, setPartnersMap] = useState<Record<string | number, string>>({});
@@ -121,13 +123,13 @@ const ProfilePage: React.FC = () => {
       if (data.success) {
         // Remove the deleted package from the state
         setPackages(prev => prev.filter(pkg => pkg.id !== packageId));
-        alert('Package deleted successfully');
+        toast.success('Package deleted successfully');
       } else {
-        alert(`Failed to delete package: ${data.error || 'Unknown error'}`);
+        toast.error(`Failed to delete package: ${data.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Delete error:', error);
-      alert('Network error occurred while deleting package');
+      toast.error('Network error occurred while deleting package');
     }
   };
 
