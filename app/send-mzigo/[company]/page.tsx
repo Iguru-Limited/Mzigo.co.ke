@@ -69,6 +69,12 @@ function SendMzigoPage() {
   const [originalData, setOriginalData] = useState<typeof formData | null>(null);
   const [missingEditSource, setMissingEditSource] = useState(false);
 
+  // Utilities
+  const toTitle = (s: string) =>
+    (s || "")
+      .toLowerCase()
+      .replace(/\b([a-z])/g, (m, p1) => p1.toUpperCase());
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -145,10 +151,10 @@ function SendMzigoPage() {
       const mapped = {
         senderName: pkg.sender_name || "",
         senderPhone: pkg.sender_phone || "",
-        senderStage: pkg.sender_town || "",
+        senderStage: toTitle(pkg.sender_town || ""),
         receiverName: pkg.receiver_name || "",
         receiverPhone: pkg.receiver_phone || "",
-        receiverStage: pkg.receiver_town || "",
+        receiverStage: toTitle(pkg.receiver_town || ""),
         parcelDescription: pkg.parcel_description || "",
         parcelValue: String(pkg.parcel_value ?? ""),
         packageSize: pkg.package_size || "",
@@ -181,7 +187,9 @@ function SendMzigoPage() {
   const temp_id = getCookie("device_id") || "unknown_device";
       
       // Get the office_id from the selected office
-      const selectedOffice = requirements.offices.find(office => office.name === formData.senderStage);
+      const selectedOffice = requirements.offices.find(
+        office => office.name?.toLowerCase() === formData.senderStage.toLowerCase()
+      );
       const office_id = selectedOffice?.id || 1;
 
       let apiUrl = '/api/register-package';
@@ -370,7 +378,7 @@ function SendMzigoPage() {
                 placeholder="From"
                 value={formData.senderStage}
                 onChange={(val) => setFormData((p) => ({ ...p, senderStage: val }))}
-                options={requirements.offices.map((o) => o.name)}
+                options={requirements.offices.map((o) => toTitle(o.name))}
                 disabled={loadingReq}
                 required
                 panel
@@ -409,7 +417,7 @@ function SendMzigoPage() {
                 onChange={(val) =>
                   setFormData((p) => ({ ...p, receiverStage: val }))
                 }
-                options={requirements.destinations.map((d) => d.name)}
+                options={requirements.destinations.map((d) => toTitle(d.name))}
                 disabled={loadingReq}
                 required
                 panel
