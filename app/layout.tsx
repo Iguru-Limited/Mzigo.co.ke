@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { ToastProvider } from "@/components/ToastProvider";
+import MobileNavBar from "@/components/MobileNavBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,8 +45,11 @@ export default function RootLayout({
           <Header />
           {/* Page Content */}
           <main className="min-h-screen bg-white">
-            <div className="p-3 sm:p-4 lg:p-6 container mx-auto">{children}</div>
+            {/* bottom padding on mobile so content isn't hidden behind nav */}
+            <div className="pb-16 md:pb-0 p-3 sm:p-4 lg:p-6 container mx-auto">{children}</div>
           </main>
+          {/* Mobile bottom navigation */}
+          <MobileNavBar />
         </ToastProvider>
       </body>
     </html>
