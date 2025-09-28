@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import LocationSelector from "@/components/LocationSelector";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { createInitialPipelineStatus, type PipelineStatus } from "@/lib/pipelineManager";
+import { useToast } from "@/components/ToastProvider";
 
 // Page-level dynamic params are accessed via useParams in client components
 
@@ -42,6 +43,7 @@ function SendMzigoPage() {
   const companyId = searchParams.get("company_id") || "1";
   const isEdit = searchParams.get("edit") === "1";
   const editingPackageId = searchParams.get("package_id");
+  const toast = useToast();
 
   const [requirements, setRequirements] = useState<{
     offices: Office[];
@@ -68,6 +70,12 @@ function SendMzigoPage() {
   });
   const [originalData, setOriginalData] = useState<typeof formData | null>(null);
   const [missingEditSource, setMissingEditSource] = useState(false);
+
+  // Utilities
+  const toTitle = (s: string) =>
+    (s || "")
+      .toLowerCase()
+      .replace(/\b([a-z])/g, (m, p1) => p1.toUpperCase());
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -145,10 +153,10 @@ function SendMzigoPage() {
       const mapped = {
         senderName: pkg.sender_name || "",
         senderPhone: pkg.sender_phone || "",
-        senderStage: pkg.sender_town || "",
+        senderStage: toTitle(pkg.sender_town || ""),
         receiverName: pkg.receiver_name || "",
         receiverPhone: pkg.receiver_phone || "",
-        receiverStage: pkg.receiver_town || "",
+        receiverStage: toTitle(pkg.receiver_town || ""),
         parcelDescription: pkg.parcel_description || "",
         parcelValue: String(pkg.parcel_value ?? ""),
         packageSize: pkg.package_size || "",
@@ -181,7 +189,9 @@ function SendMzigoPage() {
   const temp_id = getCookie("device_id") || "unknown_device";
       
       // Get the office_id from the selected office
-      const selectedOffice = requirements.offices.find(office => office.name === formData.senderStage);
+      const selectedOffice = requirements.offices.find(
+        office => office.name?.toLowerCase() === formData.senderStage.toLowerCase()
+      );
       const office_id = selectedOffice?.id || 1;
 
       let apiUrl = '/api/register-package';
@@ -215,7 +225,7 @@ function SendMzigoPage() {
           diff.company_id = parseInt(companyId);
         }
         if (Object.keys(diff).length === 1) {
-          alert('No changes to update.');
+          toast.info('No changes to update.');
           setSubmitting(false);
           return;
         }
@@ -266,15 +276,12 @@ function SendMzigoPage() {
       // Show success message with tracking number from API response
       if (isEdit) {
         try { sessionStorage.removeItem(`editingPackage_${editingPackageId}`); } catch {}
-        alert('Package updated successfully');
+        toast.success('Package updated successfully');
         router.push('/profile');
         return;
       } else {
-        alert(
-          `Mzigo Registered successfully!\n\n` +
-            `Tracking Number: ${result.generated_code}\n` +
-            `Status: ${result.message}\n` +
-            `Date: ${result.s_date} ${result.s_time}\n` 
+        toast.success(
+          `Mzigo registered successfully. Tracking: ${result.generated_code} — ${result.message} (${result.s_date} ${result.s_time})`
         );
       }
 
@@ -312,6 +319,7 @@ function SendMzigoPage() {
     } catch (error: any) {
       console.error("Registration error:", error);
       setError(error.message || "Failed to register package. Please try again.");
+      toast.error(error.message || "Failed to register package. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -370,7 +378,7 @@ function SendMzigoPage() {
                 placeholder="From"
                 value={formData.senderStage}
                 onChange={(val) => setFormData((p) => ({ ...p, senderStage: val }))}
-                options={requirements.offices.map((o) => o.name)}
+                options={requirements.offices.map((o) => toTitle(o.name))}
                 disabled={loadingReq}
                 required
                 panel
@@ -409,7 +417,7 @@ function SendMzigoPage() {
                 onChange={(val) =>
                   setFormData((p) => ({ ...p, receiverStage: val }))
                 }
-                options={requirements.destinations.map((d) => d.name)}
+                options={requirements.destinations.map((d) => toTitle(d.name))}
                 disabled={loadingReq}
                 required
                 panel
