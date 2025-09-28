@@ -268,7 +268,7 @@ const ProfilePage: React.FC = () => {
               
               <div className="mt-4 pt-4 border-t">
                 <div className="mb-2">
-                  <h3 className="font-semibold">Tracking Number</h3>
+                  <h3 className="font-semibold">Mzigo Number</h3>
                   <p className="text-lg font-mono">{pkg.generated_code}</p>
                 </div>
                 {pkg.is_suspicious === 1 && pkg.suspect_score && (
