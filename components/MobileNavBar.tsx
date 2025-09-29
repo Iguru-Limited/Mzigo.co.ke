@@ -21,7 +21,7 @@ const MobileNavBar: React.FC = () => {
       icon: (active) => (
         <svg viewBox="0 0 24 24" className={`w-6 h-6 ${active ? "text-green-600" : "text-gray-500"}`} fill="none" stroke="currentColor" strokeWidth="2">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 10.5l9-7 9 7" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 9.5V20a1 1 0 001 1H12v-6h0a0 0 0 000 0h0v6h6.5a1 1 0 001-1V9.5" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 9.5V20a1 1 0 001 1H12v-6h0v6h6.5a1 1 0 001-1V9.5" />
         </svg>
       ),
       isActive: (p) => p === "/",
@@ -63,22 +63,26 @@ const MobileNavBar: React.FC = () => {
   return (
     <nav
       aria-label="Bottom Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/70"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/70 w-full overflow-x-hidden"
+      style={{
+        paddingBottom: "env(safe-area-inset-bottom)",
+        paddingLeft: "env(safe-area-inset-left)",
+        paddingRight: "env(safe-area-inset-right)",
+      }}
     >
-      <ul className="flex items-stretch justify-around">
+      <ul className="grid grid-cols-4 items-stretch w-full">
         {items.map((it) => {
           const active = it.isActive(pathname);
           return (
-            <li key={it.href} className="flex-1">
+            <li key={it.href} className="min-w-0">
               <Link
                 href={it.href}
-                className={`flex flex-col items-center justify-center gap-1 py-2 text-xs ${
+                className={`flex flex-col items-center justify-center gap-1 py-2 text-[11px] sm:text-xs ${
                   active ? "text-green-600 font-medium" : "text-gray-600"
                 }`}
               >
                 {it.icon(active)}
-                <span>{it.label}</span>
+                <span className="truncate">{it.label}</span>
               </Link>
             </li>
           );
