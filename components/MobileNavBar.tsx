@@ -63,17 +63,17 @@ const MobileNavBar: React.FC = () => {
   return (
     <nav
       aria-label="Bottom Navigation"
-      className="md:hidden fixed inset-x-0 bottom-0 z-50 border-t border-gray-200 bg-white w-full overflow-hidden shadow-[0_-1px_8px_rgba(0,0,0,0.06)]"
+      className="md:hidden fixed inset-x-0 bottom-0 z-50 border-t border-gray-200 bg-white w-full overflow-hidden shadow-[0_-1px_8px_rgba(0,0,0,0.06)] h-14"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <ul className="grid grid-cols-4 items-stretch w-full">
+      <ul className="grid grid-cols-4 items-stretch w-full h-full">
         {items.map((it) => {
           const active = it.isActive(pathname);
           return (
             <li key={it.href} className="min-w-0">
               <Link
                 href={it.href}
-                className={`flex flex-col items-center justify-center gap-1 py-2 text-[11px] sm:text-xs ${
+                className={`flex flex-col items-center justify-center gap-1 h-full text-[11px] sm:text-xs ${
                   active ? "text-green-600 font-medium" : "text-gray-600"
                 }`}
               >

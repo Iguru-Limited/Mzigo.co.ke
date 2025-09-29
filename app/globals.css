@@ -5,6 +5,16 @@
   --foreground: #171717;
 }
 
+/* Prevent accidental horizontal overflow on mobile */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Make images and sections never exceed the viewport width */
+img, video, canvas, svg { max-width: 100%; height: auto; }
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

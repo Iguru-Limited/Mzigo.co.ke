@@ -30,7 +30,7 @@ export default function HeroSlider() {
         </h1>
 
         {/* Buttons */}
-        <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-3 w-full max-w-2xl px-12">
+  <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-3 w-full max-w-2xl px-0 sm:px-2 box-border">
           <button
             onClick={() => {
               router.push("/send-mzigo");
