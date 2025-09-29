@@ -39,14 +39,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}>
         <ToastProvider>
           {/* Header always on top */}
           <Header />
           {/* Page Content */}
           <main className="min-h-screen bg-white">
-            {/* bottom padding on mobile so content isn't hidden behind nav */}
-            <div className="pb-16 md:pb-0 p-3 sm:p-4 lg:p-6 container mx-auto">{children}</div>
+            {/* bottom padding equals nav height (h-14 = 3.5rem) + safe-area on mobile */}
+            <div className="pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0 p-3 sm:p-4 lg:p-6 container mx-auto">{children}</div>
           </main>
           {/* Mobile bottom navigation */}
           <MobileNavBar />

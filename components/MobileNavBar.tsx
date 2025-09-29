@@ -63,12 +63,8 @@ const MobileNavBar: React.FC = () => {
   return (
     <nav
       aria-label="Bottom Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/70 w-full overflow-x-hidden"
-      style={{
-        paddingBottom: "env(safe-area-inset-bottom)",
-        paddingLeft: "env(safe-area-inset-left)",
-        paddingRight: "env(safe-area-inset-right)",
-      }}
+      className="md:hidden fixed inset-x-0 bottom-0 z-50 border-t border-gray-200 bg-white w-full overflow-hidden shadow-[0_-1px_8px_rgba(0,0,0,0.06)]"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <ul className="grid grid-cols-4 items-stretch w-full">
         {items.map((it) => {
