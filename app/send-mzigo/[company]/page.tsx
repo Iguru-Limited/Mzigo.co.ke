@@ -1,30 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import LocationSelector from "@/components/LocationSelector";
+import { LocationSelector } from "@/components/ui/home";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
-import { createInitialPipelineStatus, type PipelineStatus } from "@/lib/pipelineManager";
-import { useToast } from "@/components/ToastProvider";
+import { createInitialPipelineStatus } from "@/lib/pipelineManager";
+import { useToast } from "@/components/ui/shared";
+import { capitalizeWords } from "@/lib/utils";
 
 // Page-level dynamic params are accessed via useParams in client components
-
-interface Parcel {
-  senderName: string;
-  senderPhone: string;
-  senderStage: string;
-  receiverName: string;
-  receiverPhone: string;
-  receiverStage: string;
-  parcelDescription: string;
-  parcelValue: string;
-  packageSize: string;
-  specialInstructions: string;
-  paymentMethod: string;
-  trackingNumber: string;
-  company: string;
-  pipelineStatus: PipelineStatus;
-  createdAt: string;
-}
 
 type Office = { id: number | string; name: string };
 type Destination = { id: number | string; name: string; route?: number | null };
@@ -44,7 +27,7 @@ function SendMzigoPage() {
   const isEdit = searchParams.get("edit") === "1";
   const editingPackageId = searchParams.get("package_id");
   const toast = useToast();
-
+  
   const [requirements, setRequirements] = useState<{
     offices: Office[];
     destinations: Destination[];
@@ -71,11 +54,8 @@ function SendMzigoPage() {
   const [originalData, setOriginalData] = useState<typeof formData | null>(null);
   const [missingEditSource, setMissingEditSource] = useState(false);
 
-  // Utilities
-  const toTitle = (s: string) =>
-    (s || "")
-      .toLowerCase()
-      .replace(/\b([a-z])/g, (m, p1) => p1.toUpperCase());
+  // Utility function using the new utils
+  const toTitle = (s: string) => capitalizeWords(s || "");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -281,7 +261,7 @@ function SendMzigoPage() {
         return;
       } else {
         toast.success(
-          `Mzigo registered successfully. Tracking: ${result.generated_code} — ${result.message} (${result.s_date} ${result.s_time})`
+          `Mzigo registered successfully! Tracking: ${result.generated_code}. Redirecting to your profile...`
         );
       }
 
@@ -298,7 +278,12 @@ function SendMzigoPage() {
       existingParcels.push(parcelData);
       localStorage.setItem(storageKey, JSON.stringify(existingParcels));
 
-      // Reset form
+      // Redirect to profile page to see the registered package
+      setTimeout(() => {
+        router.push('/profile');
+      }, 1500); // Give user time to see the success message
+
+      // Reset form (optional since we're redirecting)
       if (!isEdit) {
         setFormData({
         senderName: "",

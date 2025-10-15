@@ -1,43 +1,6 @@
-export interface Package {
-  id: string
-  trackingNumber: string
-  status: string
-  origin: string
-  destination: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface Company {
-  id: string
-  name: string
-  logo?: string
-  description?: string
-  rating?: number
-  services: string[]
-}
-
-export interface User {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  avatar?: string
-}
-
-export interface NavigationItem {
-  title: string
-  href: string
-  disabled?: boolean
-}
-
-export interface SiteConfig {
-  name: string
-  description: string
-  url: string
-  ogImage: string
-  links: {
-    twitter: string
-    github: string
-  }
-}
+// Central export file for all types
+export * from './common'
+export * from './home'
+export * from './send-mzigo'
+export type { Parcel, Order, TrackingSearchResult, StatusUpdateData, Package as TrackPackage } from './track-mzigo'
+export type { Package as ProfilePackage, UserProfile, ProfileFormData, UserStats } from './profile'

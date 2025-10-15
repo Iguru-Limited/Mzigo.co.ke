@@ -1,48 +1,14 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
-
-type PartnerItem = { id: string | number; name: string; logo?: string };
+import { usePartners } from "@/hooks";
 
 function Footer() {
   const router = useRouter();
-  const [items, setItems] = useState<PartnerItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    let abort = false;
-    const load = async () => {
-      try {
-        console.time("footer:fetch-partners");
-        console.log("[footer] Fetching partners...");
-        const res = await fetch("/api/partners", { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const parsed: PartnerItem[] = Array.isArray(json?.partners)
-          ? json.partners
-          : [];
-        if (!abort) {
-          setItems(parsed);
-        }
-        console.log(`[footer] Partners loaded: ${parsed.length}`);
-      } catch (e) {
-        console.error("[footer] Failed to load partners", e);
-        if (!abort) setItems([]);
-      } finally {
-        if (!abort) setLoading(false);
-        console.timeEnd("footer:fetch-partners");
-      }
-    };
-    load();
-    return () => {
-      abort = true;
-    };
-  }, []);
-
-  const partners = useMemo(() => items, [items]);
+  const { partners, loading } = usePartners();
 
   const handleLogoClick = (partnerName: string) => {
     const companySlug = partnerName.toLowerCase().replace(/\s+/g, "-");

@@ -1,50 +1,12 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import SearchBar from '@/components/SearchBar'
-import TrackingPipeline from '@/components/TrackingPipeline'
-import StatusUpdater from '@/components/StatusUpdater'
+import { SearchBar, TrackingPipeline, StatusUpdater } from '@/components/ui/track-mzigo'
 import { 
   PipelineStatus, 
   convertLegacyStatus, 
-  getCurrentStatusString,
-  createInitialPipelineStatus 
+  getCurrentStatusString,   
 } from '@/lib/pipelineManager'
-
-interface Parcel {
-  senderName: string;
-  senderPhone: string;
-  senderStage: string;
-  receiverName: string;
-  receiverPhone: string;
-  receiverStage: string;
-  parcelDescription: string;
-  parcelValue: string;
-  paymentMethod: string;
-  trackingNumber?: string;
-  company: string;
-  pipelineStatus?: PipelineStatus;
-  createdAt?: string;
-}
-
-interface Order {
-  class: string
-  code: string
-  orderId: string
-  deliveryDate: string
-  status: string
-  details: string
-  estimatedDelivery?: string
-  currentLocation?: string
-  senderName?: string
-  receiverName?: string
-  senderStage?: string
-  receiverStage?: string
-  parcelDescription?: string
-  parcelValue?: string
-  company?: string
-  pipelineStatus?: PipelineStatus
-  createdAt?: string
-}
+import type { Parcel, Order } from '@/types'
 
 // Sample data for demonstration when no localStorage data exists
 const sampleOrdersData: Order[] = [

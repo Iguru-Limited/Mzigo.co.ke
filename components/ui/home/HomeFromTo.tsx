@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import LocationSelector from "@/components/LocationSelector";
+import { LocationSelector } from ".";
 
 /**
  * Minimal UI-only From/To bar for the homepage.
