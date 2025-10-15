@@ -39,3 +39,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# migration scripts (completed)
+*.ps1
+
+# documentation (keep only README.md)
+*_RESTRUCTURED.md
+*_SUMMARY.md
+*_GUIDE.md
+*_CHECKLIST.md
+*_INDEX.md
+*_REFERENCE.md
+*_UPDATE.md
+*_COMPLETE.md
+STRUCTURE_DIAGRAM.md

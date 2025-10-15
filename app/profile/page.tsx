@@ -2,38 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import LocationSelector from "@/components/LocationSelector";
-import CompanyCard from "@/components/CompanyCard";
-import { useToast } from "@/components/ToastProvider";
-import ConfirmDialog from "@/components/ConfirmDialog";
-
-interface Package {
-  id: number;
-  company: number;
-  office: number;
-  sender_name: string;
-  sender_phone: string;
-  sender_town: string;
-  receiver_name: string;
-  receiver_phone: string;
-  receiver_town: string;
-  parcel_description: string;
-  parcel_value: number;
-  package_size: string;
-  payment_mode: string;
-  generated_code: string;
-  special_instructions?: string;
-  s_date: string;
-  s_time: string;
-  is_suspicious: number;
-  suspect_score: string | null;
-  suspect_of_id: number | null;
-  [key: string]: any;
-}
+import { useToast, ConfirmDialog } from "@/components/ui/shared";
+import type { Package as APIPackage } from "@/types/profile";
 
 
 const ProfilePage: React.FC = () => {
-  const [packages, setPackages] = useState<Package[]>([]);
+  const [packages, setPackages] = useState<APIPackage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
@@ -155,7 +129,7 @@ const ProfilePage: React.FC = () => {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-  const handleEditPackage = (pkg: Package) => {
+  const handleEditPackage = (pkg: APIPackage) => {
     // Persist full package in sessionStorage so register page can pre-fill
     try {
       sessionStorage.setItem(
@@ -218,7 +192,7 @@ const ProfilePage: React.FC = () => {
       
       {!loading && !error && packages.length > 0 && (
         <div className="space-y-4">
-          {packages.map((pkg: Package, index: number) => (
+          {packages.map((pkg: APIPackage, index: number) => (
             <div key={pkg.id || index} className="bg-white p-6 rounded-lg shadow-md">
               <div className="flex justify-between items-start mb-4">
                 <h2 className="text-xl font-semibold">
