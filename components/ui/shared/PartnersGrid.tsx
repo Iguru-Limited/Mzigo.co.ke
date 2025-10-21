@@ -1,9 +1,12 @@
 "use client";
+
 import React from "react";
 import { CompanyCard } from "../send-mzigo";
 import { usePartners } from "@/hooks";
 
-function Landingpage() {
+// PartnersGrid is a reusable grid to display partner companies using CompanyCard
+// Fetches partners via usePartners and shows skeletons while loading.
+export default function PartnersGrid() {
   const { partners, loading, error } = usePartners();
 
   if (error) {
@@ -18,7 +21,6 @@ function Landingpage() {
 
   return (
     <div className="p-3 sm:p-4 lg:p-6 container mx-auto">
-      {/* Companies */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => (
@@ -39,13 +41,9 @@ function Landingpage() {
             />
           ))
         ) : (
-          <p className="text-gray-500 text-center col-span-full">
-            No partners found.
-          </p>
+          <p className="text-gray-500 text-center col-span-full">No partners found.</p>
         )}
       </div>
     </div>
   );
 }
-
-export default Landingpage;

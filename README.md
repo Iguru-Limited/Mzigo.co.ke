@@ -50,7 +50,7 @@ Visit [http://localhost:3000](http://localhost:3000) to see the application.
 │       │   ├── ToastProvider.tsx
 │       │   └── ConfirmDialog.tsx
 │       ├── home/                # Home page components
-│       │   ├── Landingpage.tsx
+│       │   ├── (removed) Landingpage.tsx
 │       │   ├── HeroSlider.tsx
 │       │   ├── HomeFromTo.tsx
 │       │   ├── LocationSelector.tsx

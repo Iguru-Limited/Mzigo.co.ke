@@ -1,5 +1,5 @@
 import React from 'react'
-import { Landingpage } from '@/components/ui/home'
+import PartnersGrid from '@/components/ui/shared/PartnersGrid'
 
 const page = () => {
   return (
@@ -8,7 +8,7 @@ const page = () => {
           {/* Subtext */}
       <p className="text-lg font-semibold text-gray-700">Companies partnering with us</p> 
       </div>
-    <Landingpage/>
+  <PartnersGrid/>
     </>
   )
 }
