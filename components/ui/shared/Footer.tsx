@@ -24,8 +24,9 @@ function Footer() {
         {loading ? (
           <div className="flex justify-center flex-wrap gap-8" aria-busy>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="w-32 flex flex-col items-center justify-center">
-                <div className="w-32 h-32 rounded-full bg-gray-200 animate-pulse" />
+              <div key={i} className="w-32 sm:w-36 md:w-40 flex flex-col items-center justify-center">
+                {/* Rectangular skeleton to match /send-mzigo, increased size */}
+                <div className="w-full h-28 md:h-32 rounded-lg bg-gray-200 animate-pulse" />
                 <div className="mt-2 h-3 w-20 bg-gray-200 rounded animate-pulse" />
               </div>
             ))}
@@ -35,27 +36,29 @@ function Footer() {
             {partners.map((partner) => (
               <div
                 key={partner.id as React.Key}
-                className="w-32 flex flex-col items-center justify-center cursor-pointer"
+                className="w-32 sm:w-36 md:w-40 flex flex-col items-center justify-center cursor-pointer"
                 onClick={() => handleLogoClick(partner.name)}
               >
-                <div className="w-32 h-32 relative flex items-center justify-center">
+                {/* Rectangular logo container to match /send-mzigo, increased size */}
+                <div className="w-full h-28 md:h-32 relative flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden">
                   {partner.logo ? (
                     <Image
                       src={partner.logo}
                       alt={partner.name}
                       fill
-                      style={{ objectFit: "cover", borderRadius: "50%" }}
+                      style={{ objectFit: "cover" }}
                       sizes="(max-width: 768px) 100vw, 200px"
                       priority={false}
-                      className="rounded-full"
+                      className="rounded-lg object-cover"
                     />
                   ) : (
                     <Avatar
                       name={partner.name}
-                      round={true}
-                      size="128"
+                      round={false}
+                      size="100%"
                       color="#12FF6B"
                       fgColor="#ffffff"
+                      className="rounded-lg"
                     />
                   )}
                 </div>
