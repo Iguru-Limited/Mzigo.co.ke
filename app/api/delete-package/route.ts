@@ -16,7 +16,7 @@ interface DeletePackageResponse {
 
 async function deletePackage(package_id: number): Promise<DeletePackageResponse> {
   const payload = {
-    route: "HARD-DELETE-MZIGO-PACKAGE",
+    route: "DELETE-MZIGO-PACKAGE",
     package_id
   };
 
