@@ -47,15 +47,32 @@ const HomeFromTo: React.FC<HomeFromToProps> = ({ onFilter }) => {
   return (
     <section aria-label="Quick route selector" className="my-4">
       <div className="rounded-lg border border-gray-200 bg-white shadow-sm p-3 sm:p-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm text-gray-600">Select route to filter partners</span>
+          <button
+            type="button"
+            className="text-xs text-pink-600 hover:text-pink-700 underline"
+            onClick={() => {
+              setFrom("");
+              setTo("");
+              reset();
+              onFilter?.({ results: [], companies: [], count: 0, message: null });
+            }}
+          >
+            Clear filter
+          </button>
+        </div>
         <div className="flex gap-3 items-stretch">
           <div className="flex-1 min-w-0">
             <LocationSelector
               placeholder="From"
               value={from}
               onChange={async (val) => {
+                // Avoid duplicate calls if the value didn't change
+                if (val === from) return;
                 setFrom(val);
                 // Trigger filter as soon as a From is selected
-                await filterPartners({ from_town: val, to_town: to || undefined });
+                await filterPartners({ from_town: val || undefined, to_town: to || undefined });
               }}
               options={options}
               allowFreeInput={false}
@@ -67,9 +84,10 @@ const HomeFromTo: React.FC<HomeFromToProps> = ({ onFilter }) => {
               placeholder="To"
               value={to}
               onChange={async (val) => {
+                if (val === to) return;
                 setTo(val);
                 // Trigger filter as soon as a To is selected
-                await filterPartners({ from_town: from || undefined, to_town: val });
+                await filterPartners({ from_town: from || undefined, to_town: val || undefined });
               }}
               options={options}
               allowFreeInput={false}
