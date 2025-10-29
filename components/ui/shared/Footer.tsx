@@ -5,8 +5,13 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Avatar from "react-avatar";
 import { usePartners } from "@/hooks";
+import type { FilterCompanySummary } from "@/types/filter-patners";
 
-function Footer() {
+type FooterProps = {
+  filteredCompanies?: FilterCompanySummary[] | null;
+};
+
+function Footer({ filteredCompanies }: FooterProps) {
   const router = useRouter();
   const { partners, loading } = usePartners();
 
@@ -33,7 +38,10 @@ function Footer() {
           </div>
         ) : (
           <div className="flex justify-center flex-wrap gap-8">
-            {partners.map((partner) => (
+            {(filteredCompanies && filteredCompanies.length > 0
+              ? filteredCompanies.map((c) => ({ id: c.company_id, name: c.company_name, logo: undefined }))
+              : partners
+            ).map((partner) => (
               <div
                 key={partner.id as React.Key}
                 className="w-32 sm:w-36 md:w-40 flex flex-col items-center justify-center cursor-pointer"
