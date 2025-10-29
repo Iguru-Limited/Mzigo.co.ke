@@ -187,7 +187,7 @@ export const LocationSelector: React.FC<LocationSelectorProps> = ({
         <ul
           id={listId.current}
           role="listbox"
-          className={`absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white shadow-lg text-sm ${
+          className={`absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white shadow-lg text-sm text-black ${
             panel ? "border-pink-200" : "border-gray-200"
           }`}
         >
@@ -205,12 +205,12 @@ export const LocationSelector: React.FC<LocationSelectorProps> = ({
                   e.preventDefault();
                 }}
                 onClick={() => commit(opt)}
-                className={`flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-pink-50 ${
+                className={`flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-pink-50 text-black ${
                   active ? "bg-pink-100" : ""
                 }`}
               >
                 <MapPin className="w-4 h-4 text-gray-500" />
-                <span className="truncate" title={opt}>
+                <span className="truncate text-black" title={opt}>
                   {opt}
                 </span>
               </li>
